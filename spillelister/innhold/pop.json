@@ -23,22 +23,22 @@
     {
         "tittel": "Hate Me",
         "artist": "Ellie Goulding",
-        "bilde": "https://samplesongs.netlify.app/album-arts/hate-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Hate%20Me.mp3",
+        "bilde": "hate_me.jpg",
+        "musikk": "hate_me.mp3",
         "id": "4"
     },
     {
         "tittel": "Solo",
         "artist": "Clean Bandit",
-        "bilde": "https://samplesongs.netlify.app/album-arts/solo.jpg",
-        "musikk": "https://samplesongs.netlify.app/Solo.mp3",
+        "bilde": "solo.jpg",
+        "musikk": "solo.mp3",
         "id": "5"
     },
     {
         "tittel": "Without Me",
         "artist": "Halsey",
-        "bilde": "https://samplesongs.netlify.app/album-arts/without-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Without%20Me.mp3",
+        "bilde": "without_me.jpg",
+        "musikk": "Without_me.mp3",
         "id": "6"
     }
     ]

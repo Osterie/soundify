@@ -10,13 +10,22 @@
 var filinnhold = ''
 window.onload = winInit;  	// Hendelse onload(nettsida ferdig lasta): winInit kjøres automatisk
 function winInit(){ 
-    var spillelister = document.querySelectorAll('.spilleliste')	
-    console.log(spillelister)
+    var get_spillelister = document.querySelectorAll('.spilleliste')	
+    // console.log(get_spillelister)
 
-    for (let i = 0; i < spillelister.length; i++) {
-        spillelister[i].addEventListener('click', function(){
-            lesFil1(spillelister[i].innerHTML);
-        });
+    var spillelister_array = []
+
+    for (let i = 0; i < get_spillelister.length; i++) {
+
+        
+        var spilleliste_navn = get_spillelister[i].innerHTML.trim().toLowerCase()
+        spillelister_array[i] = new spilleliste(spilleliste_navn)
+        
+        console.log(spillelister_array)
+        lesFil1_klasser(get_spillelister[i].innerHTML);
+        
+        // console.log(spillelister_array)
+
         
     }
     // elGetId('spilleliste').onclick = lesFil1;  
@@ -33,6 +42,25 @@ function lastInn(file) {
 }
 
 
+filnavn = filnavn.toLowerCase().trim()
+async function lesFil1_klasser(filnavn){
+
+    //make song
+    //legg sang til spille_lister_array[x]
+
+	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
+    
+    filinnhold = JSON.parse(filinnhold)
+
+    console.log('\n\n\n\n\n')
+    for (let i = 0; i < filinnhold.length; i++) {
+        console.log(filinnhold[i])
+        
+    }
+    
+}
+
+
 async function lesFil1(filnavn) {
     filnavn = filnavn.toLowerCase().trim()
 
@@ -45,18 +73,29 @@ async function lesFil1(filnavn) {
 
     filinnhold = JSON.parse(filinnhold)
 
-        if (document.getElementById("container")) {
-        document.getElementById('container').remove()
+    //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
+    if (document.getElementById("container")) {
+    document.getElementById('container').remove()
     }
 
     
-    
+    //legger til containeren
     document.body.appendChild(container)
+
+    var spillav = document.createElement("button");
+    spillav.innerHTML = 'Spill av'
+    spillav.id = ("spill_knapp");
+    container.appendChild(spillav);
+
+    var modus = document.createElement("button");
+    modus.innerHTML = 'ENDRE MODUS'
+    modus.id = ("modus");
+    container.appendChild(modus);
+
 
     
     for (let i = 0; i < filinnhold.length; i++) {
 
-        
         var sang = document.createElement("div");
         sang.innerHTML = `${filinnhold[i].artist} - ${filinnhold[i].tittel}` ;
         sang.classList.add("album");
@@ -86,30 +125,48 @@ async function lesFil1(filnavn) {
         // console.log(filinnhold[i].musikk)
         
     }
-	visInnhold();
+
+    // audio.play()
+	// visInnhold();
 }
 
 async function lesFil2() {
 	filinnhold = await lastInn('ToMuffinsFormer.csv');
-	visInnhold();
+	// visInnhold();
 }
 
-function visInnhold(){ // Hva som skjer klikk på knapp2. 
-	// filinnhold = filinnhold.split('\n').join('<br>');
-	elGetId('utskrift').innerHTML = filinnhold;
-}
+// function visInnhold(){ // Hva som skjer klikk på knapp2. 
+// 	// filinnhold = filinnhold.split('\n').join('<br>');
+// 	elGetId('utskrift').innerHTML = filinnhold;
+// }
+
+
+
+
+
+
 class spor{
 
-    constructor(){
-        //new fetures here!
+    constructor(artist, tittel, bilde, lydspor){
+        this.artist = artist
+        this.tittel = tittel
+        this.bilde = bilde
+        this.lydspor = lydspor
     }
 
 }
 class spilleliste{
 
-    constructor(){
+    constructor(navn){
+        this.navn = navn
+        this.sanger = []
 
     }
 
+    legg_til_sang(sang){
+        this.sanger.push(sang)
+    }
+
 }
+
 
