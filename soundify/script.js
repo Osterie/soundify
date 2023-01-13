@@ -1,6 +1,15 @@
-//--- Grunnleggende koding med JS/HTML/CSS
-//--- Eksempelprogram med innlesing av serverfiler
-//--- Deklarasjon av GLOBALE variabler legges inn her )før window.onload)
+// const directory = '../spillelister/innhold';
+const directory = './spillelister/innhold/pop.json';
+fetch(directory)
+  .then(response => response.json())
+  .then(jsonData => { console.log('what', jsonData)
+    // do something with jsonData
+  })
+  .catch(error => console.error(error));
+
+
+
+
 var filinnhold = ''
 window.onload = winInit;  	// Hendelse onload(nettsida ferdig lasta): winInit kjøres automatisk
 function winInit(){ 		// Hovedprogrammet
@@ -29,19 +38,39 @@ function addElement() {
 
   }
 
+
 async function lesFil1() {
-	filinnhold = await lastInn('../spillelister/innhold/pop.json');
+	// filinnhold = await lastInn('../spillelister/innhold/pop.json');
+	filinnhold = await lastInn('./spillelister/innhold/pop.json');
     
     //Makes into object
     filinnhold = JSON.parse(filinnhold)
 
+    console.log(filinnhold)
+    console.log(filinnhold.length)
+    
     for (let i = 0; i < filinnhold.length; i++) {
 
-        var newDiv = document.createElement("div");
-        newDiv.innerHTML = "Hello, World!";
-        document.body.appendChild(newDiv);
+        var sang = document.createElement("div");
+        sang.innerHTML = `${filinnhold[i].artist} - ${filinnhold[i].tittel}` ;
+        sang.classList.add("album");
 
-        newDiv.classList.add("album");
+        document.body.appendChild(sang);
+
+        var bilde = document.createElement("img")
+        bilde.innerHTML = `./spillelister/pop/${filinnhold[i].bilde}`
+        document.body.appendChild(bilde);
+
+
+        var audio = document.createElement('audio');
+
+        audio.src = `./spillelister/pop/${filinnhold[i].musikk}`;
+
+        audio.autoplay = false;
+        audio.controls = true;
+
+        document.body.appendChild(audio);
+        
 
 
         console.log(filinnhold[i].tittel)
