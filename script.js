@@ -1,19 +1,25 @@
 // const directory = '../spillelister/innhold';
-const directory = './spillelister/innhold/pop.json';
-fetch(directory)
-  .then(response => response.json())
-  .then(jsonData => { console.log('what', jsonData)
-    // do something with jsonData
-  })
-  .catch(error => console.error(error));
-
-
-
+// const directory = './spillelister/innhold/pop.json';
+// fetch(directory)
+//   .then(response => response.json())
+//   .then(jsonData => { console.log('what', jsonData)
+//     // do something with jsonData
+//   })
+//   .catch(error => console.error(error));
 
 var filinnhold = ''
 window.onload = winInit;  	// Hendelse onload(nettsida ferdig lasta): winInit kjøres automatisk
-function winInit(){ 		// Hovedprogrammet
-	elGetId('lesFil1').onclick = lesFil1;  
+function winInit(){ 
+    var spillelister = document.querySelectorAll('.spilleliste')	
+    console.log(spillelister)
+
+    for (let i = 0; i < spillelister.length; i++) {
+        spillelister[i].addEventListener('click', function(){
+            lesFil1(spillelister[i].innerHTML);
+        });
+        
+    }
+    // elGetId('spilleliste').onclick = lesFil1;  
 }
 
 //--- Funksjoner lagd spesifikt for dette programmet følger her. 
@@ -27,40 +33,40 @@ function lastInn(file) {
 }
 
 
-function addElement() {
-    // create a new div element
-  
-    // and give it some content
-  
-    // add the text node to the newly created div
-  
-    // add the newly created element and its content into the DOM
+async function lesFil1(filnavn) {
+    filnavn = filnavn.toLowerCase().trim()
 
-  }
-
-
-async function lesFil1() {
-	// filinnhold = await lastInn('../spillelister/innhold/pop.json');
-	filinnhold = await lastInn('./spillelister/innhold/pop.json');
+	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
     
     //Makes into object
+    var container = document.createElement("div")  
+    container.id = 'container'
+
+
     filinnhold = JSON.parse(filinnhold)
 
-    console.log(filinnhold)
-    console.log(filinnhold.length)
+        if (document.getElementById("container")) {
+        document.getElementById('container').remove()
+    }
+
+    
+    
+    document.body.appendChild(container)
+
     
     for (let i = 0; i < filinnhold.length; i++) {
 
+        
         var sang = document.createElement("div");
         sang.innerHTML = `${filinnhold[i].artist} - ${filinnhold[i].tittel}` ;
         sang.classList.add("album");
 
-        document.body.appendChild(sang);
+        container.appendChild(sang);
 
         var bilde = document.createElement("img")
         bilde.src = `./spillelister/pop/${filinnhold[i].bilde}`
         
-        document.body.appendChild(bilde);
+        container.appendChild(bilde);
 
 
         var audio = document.createElement('audio');
@@ -70,17 +76,16 @@ async function lesFil1() {
         audio.autoplay = false;
         audio.controls = true;
 
-        document.body.appendChild(audio);
+        container.appendChild(audio);
         
 
 
-        console.log(filinnhold[i].tittel)
-        console.log(filinnhold[i].artist)
-        console.log(filinnhold[i].bilde)
-        console.log(filinnhold[i].musikk)
+        // console.log(filinnhold[i].tittel)
+        // console.log(filinnhold[i].artist)
+        // console.log(filinnhold[i].bilde)
+        // console.log(filinnhold[i].musikk)
         
     }
-    console.log(filinnhold.length)
 	visInnhold();
 }
 
