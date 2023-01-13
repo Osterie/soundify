@@ -9,15 +9,15 @@
     {
         "tittel": "Bad Liar",
         "artist": "Imagine Dragons",
-        "bilde": "https://samplesongs.netlify.app/album-arts/bad-liar.jpg",
-        "musikk": "https://samplesongs.netlify.app/Bad%20Liar.mp3",
+        "bilde": "bad_liar.jpg",
+        "musikk": "bad_liar.mp3",
         "id": "2"
     },
     {
         "tittel": "Faded",
         "artist": "Alan Walker",
-        "bilde": "https://samplesongs.netlify.app/album-arts/faded.jpg",
-        "musikk": "https://samplesongs.netlify.app/Faded.mp3",
+        "bilde": "faded.jpg",
+        "musikk": "faded.mp3",
         "id": "3"
     },
     {
