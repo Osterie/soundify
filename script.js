@@ -1,172 +1,206 @@
-// const directory = '../spillelister/innhold';
-// const directory = './spillelister/innhold/pop.json';
-// fetch(directory)
-//   .then(response => response.json())
-//   .then(jsonData => { console.log('what', jsonData)
-//     // do something with jsonData
-//   })
-//   .catch(error => console.error(error));
 
-var filinnhold = ''
-window.onload = winInit;  	// Hendelse onload(nettsida ferdig lasta): winInit kjøres automatisk
+//TODO: kan ha forksjlleige javascript filer, en for klasser og dette?
+class Spor{
+
+    constructor(artist, tittel, bildefil, lydfil, id){
+        this.artist = artist
+        this.tittel = tittel
+        this.bildefil = bildefil
+        this.lydfil = lydfil
+        this.id = id
+    }
+
+    spill_sang(){
+        //kun en sang, spill sangen når denne metoden kjøres
+    }
+}
+
+class Spilleliste{
+
+    constructor(){
+        this.spilleliste_navn = ''
+        this.sanger = []
+    }
+
+    async lastinn_fra_json(path, spilleliste){
+        
+        //mappe, som argument også
+        this.sanger = []
+        
+        //gjør om til små bokstaver og fjerner whitespace
+        spilleliste = spilleliste.toLowerCase().trim()
+        
+        this.innhold = await lastInn(`${path}${spilleliste}.json`);
+
+        this.innhold_objekt = JSON.parse(this.innhold)
+
+        for (let i = 0; i < this.innhold_objekt.length; i++) {
+            let sang_info = new Spor(this.innhold_objekt[i].tittel,
+                this.innhold_objekt[i].artist,
+                this.innhold_objekt[i].bilde,
+                this.innhold_objekt[i].musikk,
+                this.innhold_objekt[i].id
+                )
+
+            this.sanger.push(sang_info)
+
+            // console.log(this.filinnhold[i].tittel)
+            // console.log(this.filinnhold[i].artist)
+            // console.log(this.filinnhold[i].bilde)
+            // console.log(this.filinnhold[i].musikk)
+            // console.log(this.filinnhold[i].id)
+        }
+        console.log(this.sanger)
+    }
+
+    spill_sang(index){
+        // Audio.play or whatever
+    }
+    spill_neste(){
+
+    }
+    spill_random(){
+        // this.index = Math.random Something
+    }
+}
+
+// class Html_element{
+//     constructor(container){
+//         this.container = container
+
+//     }
+
+//     lag_bilde_element(){}
+
+//     lag_lyd_element(){}
+
+// }
+//TODODODODODO Eller lag en metode i Spilleliste()?
+//todo klasse for det å lage html elementene ut i fra gitt informasjon som 
+//todo bilde, lyd, artist, tittel
+
+let spillelister_array = [];
+let nåværende_spilleliste = new Spilleliste();
+
+window.onload = winInit;
 function winInit(){ 
-    var get_spillelister = document.querySelectorAll('.spilleliste')	
-    // console.log(get_spillelister)
 
-    var spillelister_array = []
+    hendelser()
+}
 
-    for (let i = 0; i < get_spillelister.length; i++) {
+function hendelser(){
 
-        
-        var spilleliste_navn = get_spillelister[i].innerHTML.trim().toLowerCase()
-        spillelister_array[i] = new spilleliste(spilleliste_navn)
-        
-        console.log(spillelister_array)
-        lesFil1_klasser(get_spillelister[i].innerHTML);
-        
-        // console.log(spillelister_array)
+    //henter DOM elementer med klasse spilleliste
+    let spillelister_navn = document.querySelectorAll('.spilleliste')
 
-        
+    // gir DOM elementene eventlistener click
+    for (let i = 0; i < spillelister_navn.length; i++) {
+        spillelister_navn[i].addEventListener('click', function() {
+            //ved å bruke this er det som å bruke variabelen spillelister_navn[i]
+            //Men det går ikke for i er ikke lenger definert når løkken er ferdig.
+            nåværende_spilleliste.lastinn_fra_json('./spillelister/innhold/', this.innerHTML)
+        });
     }
-    // elGetId('spilleliste').onclick = lesFil1;  
-}
-
-//--- Funksjoner lagd spesifikt for dette programmet følger her. 
-//--- Fellesfunksjoner hentes fra ../kodebiblioteker
-function elGetId(idName){ // Forenkler henting av html-objektet
-	return document.getElementById(idName);
-}
-
-function lastInn(file) {
-    return fetch(file).then((response) => response.text() );
 }
 
 
-filnavn = filnavn.toLowerCase().trim()
-async function lesFil1_klasser(filnavn){
+function play(index) {
+    nåværende_spilleliste.spill_sang(index)
+}
 
-    //make song
-    //legg sang til spille_lister_array[x]
+function lag_spilleliste(spilleliste_navn){
+    nåværende_spilleliste.lastinn_fra_json('./spillelister/innhold/', spilleliste_navn)
+}
 
-	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
+function lastInn(filnavn) {
+    return fetch(filnavn).then((response) => response.text() );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function lesFil1_klasser(filnavn){
+//     //make song
+//     //legg sang til spille_lister_array[x]
+
+// 	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
     
-    filinnhold = JSON.parse(filinnhold)
+//     filinnhold = JSON.parse(filinnhold)
 
-    console.log('\n\n\n\n\n')
-    for (let i = 0; i < filinnhold.length; i++) {
-        console.log(filinnhold[i])
-        
-    }
-    
-}
-
-
-async function lesFil1(filnavn) {
-    filnavn = filnavn.toLowerCase().trim()
-
-	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
-    
-    //Makes into object
-    var container = document.createElement("div")  
-    container.id = 'container'
-
-
-    filinnhold = JSON.parse(filinnhold)
-
-    //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
-    if (document.getElementById("container")) {
-    document.getElementById('container').remove()
-    }
-
-    
-    //legger til containeren
-    document.body.appendChild(container)
-
-    var spillav = document.createElement("button");
-    spillav.innerHTML = 'Spill av'
-    spillav.id = ("spill_knapp");
-    container.appendChild(spillav);
-
-    var modus = document.createElement("button");
-    modus.innerHTML = 'ENDRE MODUS'
-    modus.id = ("modus");
-    container.appendChild(modus);
-
-
-    
-    for (let i = 0; i < filinnhold.length; i++) {
-
-        var sang = document.createElement("div");
-        sang.innerHTML = `${filinnhold[i].artist} - ${filinnhold[i].tittel}` ;
-        sang.classList.add("album");
-
-        container.appendChild(sang);
-
-        var bilde = document.createElement("img")
-        bilde.src = `./spillelister/pop/${filinnhold[i].bilde}`
-        
-        container.appendChild(bilde);
-
-
-        var audio = document.createElement('audio');
-
-        audio.src = `./spillelister/pop/${filinnhold[i].musikk}`;
-
-        audio.autoplay = false;
-        audio.controls = true;
-
-        container.appendChild(audio);
-        
-
-
-        // console.log(filinnhold[i].tittel)
-        // console.log(filinnhold[i].artist)
-        // console.log(filinnhold[i].bilde)
-        // console.log(filinnhold[i].musikk)
-        
-    }
-
-    // audio.play()
-	// visInnhold();
-}
-
-async function lesFil2() {
-	filinnhold = await lastInn('ToMuffinsFormer.csv');
-	// visInnhold();
-}
-
-// function visInnhold(){ // Hva som skjer klikk på knapp2. 
-// 	// filinnhold = filinnhold.split('\n').join('<br>');
-// 	elGetId('utskrift').innerHTML = filinnhold;
+//     // console.log('\n\n\n\n\n')
+//     for (let i = 0; i < filinnhold.length; i++) {
+//         // console.log(filinnhold[i])
+//     }
 // }
 
 
+// async function lesFil1(filnavn) {
+//     filnavn = filnavn.toLowerCase().trim()
+
+// 	filinnhold = await lastInn(`./spillelister/innhold/${filnavn}.json`);
+    
+//     //Makes into object
+//     let container = document.createElement("div")  
+//     container.id = 'container'
 
 
+//     filinnhold = JSON.parse(filinnhold)
+
+//     //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
+//     if (document.getElementById("container")) {
+//     document.getElementById('container').remove()
+//     }
+
+    
+//     //legger til containeren
+//     document.body.appendChild(container)
+
+//     let spillav = document.createElement("button");
+//     spillav.innerHTML = 'Spill av'
+//     spillav.id = ("spill_knapp");
+//     container.appendChild(spillav);
+
+//     let modus = document.createElement("button");
+//     modus.innerHTML = 'ENDRE MODUS'
+//     modus.id = ("modus");
+//     container.appendChild(modus);
 
 
-class spor{
+    
+//     for (let i = 0; i < filinnhold.length; i++) {
 
-    constructor(artist, tittel, bilde, lydspor){
-        this.artist = artist
-        this.tittel = tittel
-        this.bilde = bilde
-        this.lydspor = lydspor
-    }
+//         let sang = document.createElement("div");
+//         sang.innerHTML = `${filinnhold[i].artist} - ${filinnhold[i].tittel}` ;
+//         sang.classList.add("album");
 
-}
-class spilleliste{
+//         container.appendChild(sang);
 
-    constructor(navn){
-        this.navn = navn
-        this.sanger = []
-
-    }
-
-    legg_til_sang(sang){
-        this.sanger.push(sang)
-    }
-
-}
+//         let bilde = document.createElement("img")
+//         bilde.src = `./spillelister/pop/${filinnhold[i].bilde}`
+        
+//         container.appendChild(bilde);
 
 
+//         let audio = document.createElement('audio');
+
+//         audio.src = `./spillelister/pop/${filinnhold[i].musikk}`;
+
+//         audio.autoplay = false;
+//         audio.controls = true;
+
+//         container.appendChild(audio);
+
+//     }
+
+//     // audio.play()
+// 	// visInnhold();
+// }
