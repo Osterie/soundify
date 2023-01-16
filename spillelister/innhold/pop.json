@@ -2,43 +2,43 @@
     {
         "tittel": "As it was",
         "artist": "Harry styles",
-        "bilde": "as_it_was.jpg",
-        "musikk": "as_it_was.mp3",
-        "id": "1"
+        "bildefil": "as_it_was.jpg",
+        "lydfil": "as_it_was.mp3",
+        "id": "0"
     },
     {
         "tittel": "Bad Liar",
         "artist": "Imagine Dragons",
-        "bilde": "bad_liar.jpg",
-        "musikk": "bad_liar.mp3",
-        "id": "2"
+        "bildefil": "bad_liar.jpg",
+        "lydfil": "bad_liar.mp3",
+        "id": "1"
     },
     {
         "tittel": "Faded",
         "artist": "Alan Walker",
-        "bilde": "faded.jpg",
-        "musikk": "faded.mp3",
-        "id": "3"
+        "bildefil": "faded.jpg",
+        "lydfil": "faded.mp3",
+        "id": "2"
     },
     {
         "tittel": "Hate Me",
         "artist": "Ellie Goulding",
-        "bilde": "https://samplesongs.netlify.app/album-arts/hate-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Hate%20Me.mp3",
-        "id": "4"
+        "bildefil": "hate_me.jpg",
+        "lydfil": "hate_me.mp3",
+        "id": "3"
     },
     {
         "tittel": "Solo",
         "artist": "Clean Bandit",
-        "bilde": "https://samplesongs.netlify.app/album-arts/solo.jpg",
-        "musikk": "https://samplesongs.netlify.app/Solo.mp3",
-        "id": "5"
+        "bildefil": "solo.jpg",
+        "lydfil": "solo.mp3",
+        "id": "4"
     },
     {
         "tittel": "Without Me",
         "artist": "Halsey",
-        "bilde": "https://samplesongs.netlify.app/album-arts/without-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Without%20Me.mp3",
-        "id": "6"
+        "bildefil": "without_me.jpg",
+        "lydfil": "Without_me.mp3",
+        "id": "5"
     }
-    ]
+]

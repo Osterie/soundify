@@ -1,44 +1,44 @@
 [
     {
-        "tittel": "Death Bed",
-        "artist": "Powfu",
-        "bilde": "https://samplesongs.netlify.app/album-arts/death-bed.jpg",
-        "musikk": "https://samplesongs.netlify.app/Death%20Bed.mp3",
-        "id": "1"
+        "tittel": "As it was",
+        "artist": "Harry styles",
+        "bildefil": "as_it_was.jpg",
+        "lydfil": "as_it_was.mp3",
+        "id": "2"
     },
     {
         "tittel": "Bad Liar",
         "artist": "Imagine Dragons",
-        "bilde": "https://samplesongs.netlify.app/album-arts/bad-liar.jpg",
-        "musikk": "https://samplesongs.netlify.app/Bad%20Liar.mp3",
-        "id": "2"
+        "bildefil": "bad_liar.jpg",
+        "lydfil": "bad_liar.mp3",
+        "id": "3"
     },
     {
         "tittel": "Faded",
         "artist": "Alan Walker",
-        "bilde": "https://samplesongs.netlify.app/album-arts/faded.jpg",
-        "musikk": "https://samplesongs.netlify.app/Faded.mp3",
-        "id": "3"
+        "bildefil": "faded.jpg",
+        "lydfil": "faded.mp3",
+        "id": "4"
     },
     {
         "tittel": "Hate Me",
         "artist": "Ellie Goulding",
-        "bilde": "https://samplesongs.netlify.app/album-arts/hate-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Hate%20Me.mp3",
-        "id": "4"
+        "bildefil": "hate_me.jpg",
+        "lydfil": "hate_me.mp3",
+        "id": "5"
     },
     {
         "tittel": "Solo",
         "artist": "Clean Bandit",
-        "bilde": "https://samplesongs.netlify.app/album-arts/solo.jpg",
-        "musikk": "https://samplesongs.netlify.app/Solo.mp3",
-        "id": "5"
+        "bildefil": "solo.jpg",
+        "lydfil": "solo.mp3",
+        "id": "1"
     },
     {
         "tittel": "Without Me",
         "artist": "Halsey",
-        "bilde": "https://samplesongs.netlify.app/album-arts/without-me.jpg",
-        "musikk": "https://samplesongs.netlify.app/Without%20Me.mp3",
-        "id": "6"
+        "bildefil": "without_me.jpg",
+        "lydfil": "Without_me.mp3",
+        "id": "0"
     }
-    ]
+]
