@@ -22,35 +22,31 @@ class Spilleliste{
         this.sanger = []
     }
 
-    async lastinn_fra_json(path, spilleliste){
+    async lastinn_fra_json(path_json, spilleliste_navn){
         
-        //mappe, som argument også
         this.sanger = []
+        this.path_json = path_json
         
         //gjør om til små bokstaver og fjerner whitespace
-        spilleliste = spilleliste.toLowerCase().trim()
+        spilleliste_navn = spilleliste_navn.toLowerCase().trim()
+        this.spilleliste_navn = spilleliste_navn
+        this.path_playlist = `spillelister/${this.spilleliste_navn}`
         
-        this.innhold = await lastInn(`${path}${spilleliste}.json`);
+        this.innhold = await lastInn(`${this.path_json}${this.spilleliste_navn}.json`);
 
         this.innhold_objekt = JSON.parse(this.innhold)
 
         for (let i = 0; i < this.innhold_objekt.length; i++) {
             let sang_info = new Spor(this.innhold_objekt[i].tittel,
                 this.innhold_objekt[i].artist,
-                this.innhold_objekt[i].bilde,
-                this.innhold_objekt[i].musikk,
+                this.innhold_objekt[i].bildefil,
+                this.innhold_objekt[i].lydfil,
                 this.innhold_objekt[i].id
                 )
 
             this.sanger.push(sang_info)
-
-            // console.log(this.filinnhold[i].tittel)
-            // console.log(this.filinnhold[i].artist)
-            // console.log(this.filinnhold[i].bilde)
-            // console.log(this.filinnhold[i].musikk)
-            // console.log(this.filinnhold[i].id)
         }
-        console.log(this.sanger)
+        this.updater_nettside()
     }
 
     spill_sang(index){
@@ -61,6 +57,53 @@ class Spilleliste{
     }
     spill_random(){
         // this.index = Math.random Something
+    }
+
+    updater_nettside(){
+
+        let container = document.createElement("div")  
+        container.id = 'container'
+
+        //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
+        if (document.getElementById("container")) {
+            document.getElementById('container').remove()
+        }
+
+        //legger til containeren
+        document.body.appendChild(container)
+
+        let spillav = document.createElement("button");
+        spillav.innerHTML = 'Spill av'
+        spillav.id = ("spill_knapp");
+
+        container.appendChild(spillav);
+
+        let modus = document.createElement("button");
+        modus.innerHTML = 'ENDRE MODUS'
+        modus.id = ("modus");
+        container.appendChild(modus);
+
+
+    
+    for (let i = 0; i < this.sanger.length; i++) {
+
+        let sang = document.createElement("div");
+        sang.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
+        sang.classList.add("album");
+        container.appendChild(sang);
+
+        
+        let bilde = document.createElement("img")
+        bilde.src = `${this.path_playlist}/${this.sanger[i].bildefil}`
+        container.appendChild(bilde);
+
+        let audio = document.createElement('audio');
+        audio.src = `${this.path_playlist}/${this.sanger[i].lydfil}`;
+        audio.autoplay = false;
+        audio.controls = true;
+
+        container.appendChild(audio);
+        }
     }
 }
 
@@ -108,9 +151,9 @@ function play(index) {
     nåværende_spilleliste.spill_sang(index)
 }
 
-function lag_spilleliste(spilleliste_navn){
-    nåværende_spilleliste.lastinn_fra_json('./spillelister/innhold/', spilleliste_navn)
-}
+// function lag_spilleliste(spilleliste_navn){
+//     nåværende_spilleliste.lastinn_fra_json('./spillelister/innhold/', spilleliste_navn)
+// }
 
 function lastInn(filnavn) {
     return fetch(filnavn).then((response) => response.text() );
