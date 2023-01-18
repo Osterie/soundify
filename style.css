@@ -1,5 +1,22 @@
-
-
 .album{
+    width: 200px;
     background-color: wheat;
+}
+
+.bilde{
+    width: 150px;
+    background-color: black;
+}
+
+#container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 200px;
+    grid-gap: 100px;
+}
+
+.sang_kort{
+    margin: 20px;
+    width: 200px;
+    height: 200px;
 }
