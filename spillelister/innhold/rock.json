@@ -4,41 +4,41 @@
         "artist": "Harry styles",
         "bildefil": "as_it_was.jpg",
         "lydfil": "as_it_was.mp3",
-        "id": "2"
+        "id": "0"
     },
     {
         "tittel": "Bad Liar",
         "artist": "Imagine Dragons",
         "bildefil": "bad_liar.jpg",
         "lydfil": "bad_liar.mp3",
-        "id": "3"
+        "id": "1"
     },
     {
         "tittel": "Faded",
         "artist": "Alan Walker",
         "bildefil": "faded.jpg",
         "lydfil": "faded.mp3",
-        "id": "4"
+        "id": "2"
     },
     {
         "tittel": "Hate Me",
         "artist": "Ellie Goulding",
         "bildefil": "hate_me.jpg",
         "lydfil": "hate_me.mp3",
-        "id": "5"
+        "id": "3"
     },
     {
         "tittel": "Solo",
         "artist": "Clean Bandit",
         "bildefil": "solo.jpg",
         "lydfil": "solo.mp3",
-        "id": "1"
+        "id": "4"
     },
     {
         "tittel": "Without Me",
         "artist": "Halsey",
         "bildefil": "without_me.jpg",
-        "lydfil": "Without_me.mp3",
-        "id": "0"
+        "lydfil": "without_me.mp3",
+        "id": "5"
     }
 ]
