@@ -94,7 +94,7 @@ class Spilleliste{
         modus.innerHTML = 'ENDRE MODUS'
         modus.id = ("modus");
         container.appendChild(modus);
-
+//change
 
     //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
     for (let i = 0; i < this.sanger.length; i++) {
