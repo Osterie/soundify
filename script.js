@@ -23,7 +23,7 @@ function hendelser(){
 
 
 function play(index) {
-    nåværende_spilleliste.spill_sang(index)
+    nåværende_spilleliste.spill_sang_spilleliste(index)
 }
 
 

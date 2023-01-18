@@ -9,6 +9,7 @@ class Spor{
     }
 
     spill_sang(){
+        this.lydfil.audio.play //?
         //kun en sang, spill sangen når denne metoden kjøres
     }
 }
@@ -18,6 +19,7 @@ class Spilleliste{
     constructor(){
         this.spilleliste_navn = ''
         this.sanger = []
+        this.current_lydspor_id = 0
     }
 
     async lastinn_fra_json(path_json, spilleliste_navn){
@@ -47,7 +49,9 @@ class Spilleliste{
         this.updater_nettside()
     }
 
-    spill_sang(index){
+    spill_sang_spilleliste(index){
+        console.log('playing')
+        this.sanger[index].spill_sang()
         // Audio.play or whatever
     }
     spill_neste(){
@@ -61,28 +65,38 @@ class Spilleliste{
 
         let container = document.createElement("div")  
         container.id = 'container'
-
         //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
         if (document.getElementById("container")) {
             document.getElementById('container').remove()
         }
-
         //legger til containeren
         document.body.appendChild(container)
 
+        //lager spill av knappen
         let spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = ("spill_knapp");
+        // spillav.addEventListener('click', this.spill_sang_spilleliste(0));
+        // spillav.addEventListener('click', function() {
 
-        // container.appendChild(spillav);
+        //     this.spill_sang_spilleliste(0)
 
+        // });
+
+        // this.spillav.addEventListener("click", (event) => this.spill_sang_spilleliste(0), false);
+    
+
+        container.appendChild(spillav);
+
+
+        //lager knappen hvor man kan endre avspillings modus
         let modus = document.createElement("button");
         modus.innerHTML = 'ENDRE MODUS'
         modus.id = ("modus");
-        // container.appendChild(modus);
+        container.appendChild(modus);
 
 
-    
+    //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
     for (let i = 0; i < this.sanger.length; i++) {
 
         let sang_kort = document.createElement("div")  
