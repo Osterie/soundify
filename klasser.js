@@ -1,16 +1,38 @@
+let timer = 3
+let minutter = 4
+let sekunder = 50
+
+let ny_sekunder = sekunder + minutter*60 + timer*3600
+let ny_minutter = ny_sekunder/60
+let ny_timer = ny_minutter/60
+    
+console.log(ny_sekunder)
+console.log(ny_minutter)
+console.log(ny_timer)
+
 class Spor{
 
-    constructor(artist, tittel, bildefil, lydfil, id){
+    constructor(artist, tittel, bildefil, lydfil, id, path_bilde_lyd){
         this.artist = artist
         this.tittel = tittel
         this.bildefil = bildefil
         this.lydfil = lydfil
         this.id = id
+        this.path_bilde_lyd = path_bilde_lyd
     }
 
     spill_sang(){
-        this.lydfil.audio.play //?
-        //kun en sang, spill sangen når denne metoden kjøres
+        // var element = document.querySelector('[src]');
+        // console.log(element);
+        let audioElements = document.getElementsByClassName("lyd");
+        let targetSrc = `${this.path_bilde_lyd}/${this.lydfil}`;
+        
+        for (let i = 0; i < audioElements.length; i++) {
+            if((audioElements[i].src).includes(targetSrc)) {
+                audioElements[i].play();
+                break;
+            }
+        }
     }
 }
 
@@ -31,17 +53,19 @@ class Spilleliste{
         spilleliste_navn = spilleliste_navn.toLowerCase().trim()
         this.spilleliste_navn = spilleliste_navn
         this.path_playlist = `spillelister/${this.spilleliste_navn}`
-        
-        this.innhold = await lastInn(`${this.path_json}${this.spilleliste_navn}.json`);
 
+        this.innhold = await lastInn(`${this.path_json}${this.spilleliste_navn}.json`);
+        
         this.innhold_objekt = JSON.parse(this.innhold)
+        
 
         for (let i = 0; i < this.innhold_objekt.length; i++) {
             let sang_info = new Spor(this.innhold_objekt[i].tittel,
                 this.innhold_objekt[i].artist,
                 this.innhold_objekt[i].bildefil,
                 this.innhold_objekt[i].lydfil,
-                this.innhold_objekt[i].id
+                this.innhold_objekt[i].id,
+                this.path_playlist
                 )
 
             this.sanger.push(sang_info)
@@ -50,9 +74,7 @@ class Spilleliste{
     }
 
     spill_sang_spilleliste(index){
-        console.log('playing')
         this.sanger[index].spill_sang()
-        // Audio.play or whatever
     }
     spill_neste(){
 
@@ -63,29 +85,22 @@ class Spilleliste{
 
     updater_nettside(){
 
+        //TODO: lag en placeholder i html, som container blir lagt til i istedenfor slik?
+
         let container = document.createElement("div")  
         container.id = 'container'
         //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
-        if (document.getElementById("container")) {
-            document.getElementById('container').remove()
+        if (document.getElementById(container.id)) {
+            document.getElementById(container.id).remove()
         }
-        //legger til containeren
         document.body.appendChild(container)
+
 
         //lager spill av knappen
         let spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = ("spill_knapp");
-        // spillav.addEventListener('click', this.spill_sang_spilleliste(0));
-        // spillav.addEventListener('click', function() {
-
-        //     this.spill_sang_spilleliste(0)
-
-        // });
-
-        // this.spillav.addEventListener("click", (event) => this.spill_sang_spilleliste(0), false);
-    
-
+        spillav.addEventListener("click", (event) => this.spill_sang_spilleliste(this.current_lydspor_id), false);
         container.appendChild(spillav);
 
 
@@ -94,7 +109,6 @@ class Spilleliste{
         modus.innerHTML = 'ENDRE MODUS'
         modus.id = ("modus");
         container.appendChild(modus);
-//change
 
     //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
     for (let i = 0; i < this.sanger.length; i++) {
@@ -114,12 +128,13 @@ class Spilleliste{
         bilde.classList.add("bilde");
         sang_kort.appendChild(bilde);
 
-        let audio = document.createElement('audio');
-        audio.src = `${this.path_playlist}/${this.sanger[i].lydfil}`;
-        audio.autoplay = false;
-        audio.controls = true;
+        let lyd = document.createElement('audio');
+        lyd.src = `${this.path_playlist}/${this.sanger[i].lydfil}`;
+        lyd.classList.add('lyd')
+        lyd.autoplay = false;
+        lyd.controls = true;
+        sang_kort.appendChild(lyd);
 
-        sang_kort.appendChild(audio);
         }
     }
 }
