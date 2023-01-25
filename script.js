@@ -20,10 +20,6 @@ function hendelser(){
     }
 }
 
-function play(index) {
-    nåværende_spilleliste.spill_sang_spilleliste(index)
-}
-
 function lastInn(filnavn) {
     return fetch(filnavn).then((response) => response.text() );
 }
