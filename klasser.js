@@ -1,4 +1,3 @@
-
 class Spor{
 
     constructor(artist, tittel, bildefil, lydfil, id, path_bilde_lyd){
@@ -45,7 +44,6 @@ class Spor{
         }
     }
 }
-
 class Spilleliste{
 
     constructor(){
@@ -86,12 +84,10 @@ class Spilleliste{
 
         //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
         if (this.spill_modus === 'sekvensiell'){
-
             //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
             if (this.current_lydspor_id === this.sanger.length){
                 this.current_lydspor_id = 0
             }
-            
             this.spill_sang()
         }
 
@@ -100,7 +96,6 @@ class Spilleliste{
             this.spill_random()
             }
         }
-    
 
     spill_sang(){
         this.reset_nesten_alle_sanger(this.current_lydspor_id)
@@ -108,18 +103,15 @@ class Spilleliste{
     }
 
     spill_random(){
-
         //random tall fra og med 0 til og med lengden på playlisten
         //velger ett nytt tilfedlig tall om det er det samme som forrige
         let index = Math.floor(Math.random() * this.sanger.length);
         while (index === this.current_lydspor_id){
             index = Math.floor(Math.random() * this.sanger.length);
         }
-
         this.reset_nesten_alle_sanger()
         this.current_lydspor_id = index
         this.sanger[this.current_lydspor_id].spill_pause_sang()    
-
     }
 
     endre_modus(){
@@ -142,7 +134,6 @@ class Spilleliste{
     }
 
     updater_nettside(){
-
         //TODO: lag en placeholder i html, som container blir lagt til i istedenfor slik?
 
         let container = document.createElement("div")  
@@ -162,7 +153,6 @@ class Spilleliste{
         });
 
         container.appendChild(spillav);
-
 
         //lager knappen hvor man kan endre avspillings modus
         let modus_knapp = document.createElement("button");
@@ -191,7 +181,6 @@ class Spilleliste{
         sang.classList.add("album");
         sang_kort.appendChild(sang);
 
-        
         let bilde = document.createElement("img")
         bilde.src = `${this.path_playlist}/${this.sanger[i].bildefil}`
         bilde.classList.add("bilde");
@@ -199,7 +188,6 @@ class Spilleliste{
 
         let lyd = document.createElement('audio');
         lyd.src = `${this.path_playlist}/${this.sanger[i].lydfil}`;
-        
         lyd.addEventListener("ended", () => {
             //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
             //om modus er "tilfeldig" spiller det ingen rolle
@@ -217,14 +205,10 @@ class Spilleliste{
         lyd.autoplay = false;
         lyd.controls = true;
 
-
         sang_kort.appendChild(lyd);
-
         }
     }
 }
-
-
 
 //TODO kan bruke arv
 // new Spilleliste_gui
