@@ -30,16 +30,16 @@ class Spor{
         }
     }
     
-
     reset_sang(){
 
-        let audioElements = document.getElementsByClassName("lyd");
-        let targetSrc = `${this.path_bilde_lyd}/${this.lydfil}`;
+        let lyd_elementer = document.getElementsByClassName("lyd");
+        let mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
         
-        for (let i = 0; i < audioElements.length; i++) {
-            if((audioElements[i].src).includes(targetSrc)) {
-                audioElements[i].pause();
-                audioElements[i].currentTime = 0;
+        //sjekker src til alle lyd elementer, om den 
+        for (let i = 0; i < lyd_elementer.length; i++) {
+            if((lyd_elementer[i].src).includes(mål_src)) {
+                lyd_elementer[i].pause();
+                lyd_elementer[i].currentTime = 0;
                 break;
             }
         }
@@ -52,7 +52,7 @@ class Spilleliste{
         this.spilleliste_navn = ''
         this.sanger = []
         this.current_lydspor_id = 0
-        this.spill_modus = 'neste'
+        this.spill_modus = 'sekvensiell'
     }
 
     async lastinn_fra_json(path_json, spilleliste_navn){
@@ -84,30 +84,26 @@ class Spilleliste{
 
     spill_sang_spilleliste(){
 
-        //om spill_modus er satt til å spille neste øker sang index med 1 (eller til 0)
-        if (this.spill_modus == 'neste'){
-            //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare neste som spilles
-            this.current_lydspor_id += 0
-            if (this.current_lydspor_id == this.sanger.length){
+        //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
+        if (this.spill_modus === 'sekvensiell'){
+
+            //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
+            if (this.current_lydspor_id === this.sanger.length){
                 this.current_lydspor_id = 0
             }
             
-            this.spill_neste()
+            this.spill_sang()
         }
 
         //om sang modus er tilfeldig spilles av en tilfeldig sang(som ikke er samme sang som allerede spiller)
-        else if (this.spill_modus == 'tilfeldig'){
+        else if (this.spill_modus === 'tilfeldig'){
             this.spill_random()
             }
-            // this.sanger[index].spill_pause_sang()
         }
     
 
-    spill_neste(){
-        //om sangen resetes blir den ikke pauset!!!!
-        // for (let i = 0; i < this.sanger.length; i++) {
-        //     this.sanger[i].reset_sang();
-        // }
+    spill_sang(){
+        this.reset_nesten_alle_sanger(this.current_lydspor_id)
         this.sanger[this.current_lydspor_id].spill_pause_sang()
     }
 
@@ -116,24 +112,32 @@ class Spilleliste{
         //random tall fra og med 0 til og med lengden på playlisten
         //velger ett nytt tilfedlig tall om det er det samme som forrige
         let index = Math.floor(Math.random() * this.sanger.length);
-        while (index == this.current_lydspor_id){
+        while (index === this.current_lydspor_id){
             index = Math.floor(Math.random() * this.sanger.length);
         }
 
-        for (let i = 0; i < this.sanger.length; i++) {
-            this.sanger[i].reset_sang();
-        }
+        this.reset_nesten_alle_sanger()
         this.current_lydspor_id = index
         this.sanger[this.current_lydspor_id].spill_pause_sang()    
 
     }
 
     endre_modus(){
-        if (this.spill_modus == 'neste'){
+        if (this.spill_modus === 'sekvensiell'){
             this.spill_modus = 'tilfeldig'
         }
-        else if (this.spill_modus == 'tilfeldig'){
-            this.spill_modus = 'neste'
+        else if (this.spill_modus === 'tilfeldig'){
+            this.spill_modus = 'sekvensiell'
+        }
+    }
+
+    reset_nesten_alle_sanger(unntak){
+        for (let i = 0; i < this.sanger.length; i++) {
+            //Om man trykker spill av igjen og har modus "sekvensiell", resets ikke sangen.
+            if (i === unntak){
+                continue
+            }
+            this.sanger[i].reset_sang();
         }
     }
 
@@ -165,7 +169,7 @@ class Spilleliste{
         modus_knapp.innerHTML = 'ENDRE MODUS'
         modus_knapp.id = ("modus");
         modus_knapp.addEventListener("click", () => {
-            if (this.spill_modus === 'neste'){
+            if (this.spill_modus === 'sekvensiell'){
                 modus_knapp.style.backgroundColor = 'green'
             }
             else if (this.spill_modus === 'tilfeldig'){
@@ -197,18 +201,30 @@ class Spilleliste{
         lyd.src = `${this.path_playlist}/${this.sanger[i].lydfil}`;
         
         lyd.addEventListener("ended", () => {
-            this.current_lydspor_id += 1
+            //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
+            //om modus er "tilfeldig" spiller det ingen rolle
+            this.current_lydspor_id = parseInt(this.sanger[i].id) + 1
             this.spill_sang_spilleliste()
+        });
+
+        lyd.addEventListener("play", () => {
+            this.current_lydspor_id = parseInt(this.sanger[i].id)
+            this.reset_nesten_alle_sanger(this.current_lydspor_id)
+
         });
 
         lyd.classList.add('lyd')
         lyd.autoplay = false;
         lyd.controls = true;
+
+
         sang_kort.appendChild(lyd);
 
         }
     }
 }
+
+
 
 //TODO kan bruke arv
 // new Spilleliste_gui
