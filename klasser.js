@@ -85,10 +85,10 @@ class Spilleliste{
     spill_sang_spilleliste(){
 
         //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
-        if (this.spill_modus == 'sekvensiell'){
+        if (this.spill_modus === 'sekvensiell'){
 
             //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
-            if (this.current_lydspor_id == this.sanger.length){
+            if (this.current_lydspor_id === this.sanger.length){
                 this.current_lydspor_id = 0
             }
             
@@ -96,7 +96,7 @@ class Spilleliste{
         }
 
         //om sang modus er tilfeldig spilles av en tilfeldig sang(som ikke er samme sang som allerede spiller)
-        else if (this.spill_modus == 'tilfeldig'){
+        else if (this.spill_modus === 'tilfeldig'){
             this.spill_random()
             }
         }
@@ -112,7 +112,7 @@ class Spilleliste{
         //random tall fra og med 0 til og med lengden på playlisten
         //velger ett nytt tilfedlig tall om det er det samme som forrige
         let index = Math.floor(Math.random() * this.sanger.length);
-        while (index == this.current_lydspor_id){
+        while (index === this.current_lydspor_id){
             index = Math.floor(Math.random() * this.sanger.length);
         }
 
@@ -123,10 +123,10 @@ class Spilleliste{
     }
 
     endre_modus(){
-        if (this.spill_modus == 'sekvensiell'){
+        if (this.spill_modus === 'sekvensiell'){
             this.spill_modus = 'tilfeldig'
         }
-        else if (this.spill_modus == 'tilfeldig'){
+        else if (this.spill_modus === 'tilfeldig'){
             this.spill_modus = 'sekvensiell'
         }
     }
