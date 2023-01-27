@@ -8,15 +8,19 @@
     background-color: black;
 }
 
-#container{
+#kontainer_spilleliste{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: 200px;
     grid-gap: 100px;
 }
 
-.sang_kort{
+.innhold_kort{
     margin: 20px;
     width: 200px;
     height: 200px;
+}
+
+#modus{
+    background-color: white;
 }

@@ -1,4 +1,4 @@
-let nåværende_spilleliste = new Spilleliste();
+const nåværende_spilleliste = new Spilleliste();
 
 window.onload = winInit;
 function winInit(){ 
@@ -8,7 +8,7 @@ function winInit(){
 function hendelser(){
 
     //henter DOM elementer med klasse lik "spilleliste"
-    let spillelister_navn = document.querySelectorAll('.spilleliste')
+    const spillelister_navn = document.querySelectorAll('.spilleliste')
 
     //gir DOM elementene eventlistener click
     for (let i = 0; i < spillelister_navn.length; i++) {
@@ -18,12 +18,4 @@ function hendelser(){
             nåværende_spilleliste.lastinn_fra_json('./spillelister/innhold/', this.innerHTML)
         });
     }
-}
-
-function play(index) {
-    nåværende_spilleliste.spill_sang_spilleliste(index)
-}
-
-function lastInn(filnavn) {
-    return fetch(filnavn).then((response) => response.text() );
 }
