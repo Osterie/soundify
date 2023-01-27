@@ -142,7 +142,7 @@ class Spilleliste{
         kontainer.replaceChildren()
 
         //lager spill av knappen
-        let spillav = document.createElement("button");
+        const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = ("spill_knapp");
         spillav.addEventListener("click", () => { 
@@ -171,21 +171,21 @@ class Spilleliste{
         //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
         for (let i = 0; i < this.sanger.length; i++) {
 
-            let sang_kort = document.createElement("div")  
+            const sang_kort = document.createElement("div")  
             sang_kort.classList.add('sang_kort')
             kontainer.appendChild(sang_kort);
 
-            let sang = document.createElement("div");
+            const sang = document.createElement("div");
             sang.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
             sang.classList.add("album");
             sang_kort.appendChild(sang);
 
-            let bilde = document.createElement("img")
+            const bilde = document.createElement("img")
             bilde.src = `${this.path_spilleliste}/${this.sanger[i].bildefil}`
             bilde.classList.add("bilde");
             sang_kort.appendChild(bilde);
 
-            let lyd = document.createElement('audio');
+            const lyd = document.createElement('audio');
             lyd.src = `${this.path_spilleliste}/${this.sanger[i].lydfil}`;
             lyd.addEventListener("ended", () => {
                 //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
@@ -205,7 +205,7 @@ class Spilleliste{
             lyd.controls = true;
 
             sang_kort.appendChild(lyd);
-            }
+        }
     }
 }
 // class Oppdater_nettside extends Spilleliste{
