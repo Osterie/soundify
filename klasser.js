@@ -134,15 +134,10 @@ class Spilleliste{
     }
 
     updater_nettside(){
-        //TODO: lag en placeholder i html, som container blir lagt til i istedenfor slik?
 
-        let container = document.createElement("div")  
-        container.id = 'container'
-        //om containeren allerede er laget, blir den fjernet og etterhvert byttet ut mot en ny en.
-        if (document.getElementById(container.id)) {
-            document.getElementById(container.id).remove()
-        }
-        document.body.appendChild(container)
+        let kontainer = document.getElementById('kontainer_spilleliste')
+        //fjerner innholdet til kontaineren.
+        kontainer.replaceChildren()
 
         //lager spill av knappen
         let spillav = document.createElement("button");
@@ -152,7 +147,7 @@ class Spilleliste{
             this.spill_sang_spilleliste(this.nåværende_lydspor_id)
         });
 
-        container.appendChild(spillav);
+        kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
         let modus_knapp = document.createElement("button");
@@ -167,14 +162,14 @@ class Spilleliste{
             }
             this.endre_modus();
         });
-        container.appendChild(modus_knapp);
+        kontainer.appendChild(modus_knapp);
 
     //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
     for (let i = 0; i < this.sanger.length; i++) {
 
         let sang_kort = document.createElement("div")  
         sang_kort.classList.add('sang_kort')
-        container.appendChild(sang_kort);
+        kontainer.appendChild(sang_kort);
 
         let sang = document.createElement("div");
         sang.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
