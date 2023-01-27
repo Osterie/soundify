@@ -11,8 +11,8 @@ class Spor{
 
     spill_pause_sang(){
 
-        let lyd_elementer = document.getElementsByClassName("lyd");
-        let mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
+        const lyd_elementer = document.getElementsByClassName("lyd");
+        const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
         
         for (let i = 0; i < lyd_elementer.length; i++) {
             if((lyd_elementer[i].src).includes(mål_src)) {
@@ -31,8 +31,8 @@ class Spor{
     
     reset_sang(){
 
-        let lyd_elementer = document.getElementsByClassName("lyd");
-        let mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
+        const lyd_elementer = document.getElementsByClassName("lyd");
+        const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
         
         //sjekker src til alle lyd elementer, om den 
         for (let i = 0; i < lyd_elementer.length; i++) {
@@ -67,7 +67,7 @@ class Spilleliste{
         this.innhold_objekt = JSON.parse(this.innhold)
 
         for (let i = 0; i < this.innhold_objekt.length; i++) {
-            let sang_info = new Spor(this.innhold_objekt[i].tittel,
+            const sang_info = new Spor(this.innhold_objekt[i].tittel,
                 this.innhold_objekt[i].artist,
                 this.innhold_objekt[i].bildefil,
                 this.innhold_objekt[i].lydfil,
@@ -88,7 +88,7 @@ class Spilleliste{
             if (this.nåværende_lydspor_id === this.sanger.length){
                 this.nåværende_lydspor_id = 0
             }
-            this.spill_sang()
+            this.spill_sekvensiell()
         }
 
         //om sang modus er tilfeldig spilles av en tilfeldig sang(som ikke er samme sang som allerede spiller)
@@ -97,7 +97,7 @@ class Spilleliste{
             }
         }
 
-    spill_sang(){
+    spill_sekvensiell(){
         this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
         this.sanger[this.nåværende_lydspor_id].spill_pause_sang()
     }
@@ -116,9 +116,11 @@ class Spilleliste{
 
     endre_modus(){
         if (this.spill_modus === 'sekvensiell'){
+            this.modus_knapp.style.backgroundColor = 'green'
             this.spill_modus = 'tilfeldig'
         }
         else if (this.spill_modus === 'tilfeldig'){
+            this.modus_knapp.style.backgroundColor = 'white'
             this.spill_modus = 'sekvensiell'
         }
     }
@@ -135,7 +137,7 @@ class Spilleliste{
 
     updater_nettside(){
 
-        let kontainer = document.getElementById('kontainer_spilleliste')
+        const kontainer = document.getElementById('kontainer_spilleliste')
         //fjerner innholdet til kontaineren.
         kontainer.replaceChildren()
 
@@ -150,60 +152,69 @@ class Spilleliste{
         kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
-        let modus_knapp = document.createElement("button");
-        modus_knapp.innerHTML = 'ENDRE MODUS'
-        modus_knapp.id = ("modus");
-        modus_knapp.addEventListener("click", () => {
-            if (this.spill_modus === 'sekvensiell'){
-                modus_knapp.style.backgroundColor = 'green'
-            }
-            else if (this.spill_modus === 'tilfeldig'){
-                modus_knapp.style.backgroundColor = 'white'
-            }
+        this.modus_knapp = document.createElement("button");
+        this.modus_knapp.innerHTML = 'ENDRE MODUS'
+        this.modus_knapp.id = ("modus");
+        this.modus_knapp.addEventListener("click", () => {
             this.endre_modus();
         });
-        kontainer.appendChild(modus_knapp);
 
-    //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
-    for (let i = 0; i < this.sanger.length; i++) {
-
-        let sang_kort = document.createElement("div")  
-        sang_kort.classList.add('sang_kort')
-        kontainer.appendChild(sang_kort);
-
-        let sang = document.createElement("div");
-        sang.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
-        sang.classList.add("album");
-        sang_kort.appendChild(sang);
-
-        let bilde = document.createElement("img")
-        bilde.src = `${this.path_spilleliste}/${this.sanger[i].bildefil}`
-        bilde.classList.add("bilde");
-        sang_kort.appendChild(bilde);
-
-        let lyd = document.createElement('audio');
-        lyd.src = `${this.path_spilleliste}/${this.sanger[i].lydfil}`;
-        lyd.addEventListener("ended", () => {
-            //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
-            //om modus er "tilfeldig" spiller det ingen rolle
-            this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
-            this.spill_sang_spilleliste()
-        });
-
-        lyd.addEventListener("play", () => {
-            this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
-            this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
-
-        });
-
-        lyd.classList.add('lyd')
-        lyd.autoplay = false;
-        lyd.controls = true;
-
-        sang_kort.appendChild(lyd);
+        if (this.spill_modus === 'sekvensiell'){
+            this.modus_knapp.style.backgroundColor = 'white'
         }
+         else if (this.spill_modus === 'tilfeldig'){
+            this.modus_knapp.style.backgroundColor = 'green'
+        }
+
+        kontainer.appendChild(this.modus_knapp);
+
+        //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
+        for (let i = 0; i < this.sanger.length; i++) {
+
+            let sang_kort = document.createElement("div")  
+            sang_kort.classList.add('sang_kort')
+            kontainer.appendChild(sang_kort);
+
+            let sang = document.createElement("div");
+            sang.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
+            sang.classList.add("album");
+            sang_kort.appendChild(sang);
+
+            let bilde = document.createElement("img")
+            bilde.src = `${this.path_spilleliste}/${this.sanger[i].bildefil}`
+            bilde.classList.add("bilde");
+            sang_kort.appendChild(bilde);
+
+            let lyd = document.createElement('audio');
+            lyd.src = `${this.path_spilleliste}/${this.sanger[i].lydfil}`;
+            lyd.addEventListener("ended", () => {
+                //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
+                //om modus er "tilfeldig" spiller det ingen rolle
+                this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
+                this.spill_sang_spilleliste()
+            });
+
+            lyd.addEventListener("play", () => {
+                this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
+                this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
+
+            });
+
+            lyd.classList.add('lyd')
+            lyd.autoplay = false;
+            lyd.controls = true;
+
+            sang_kort.appendChild(lyd);
+            }
     }
 }
+// class Oppdater_nettside extends Spilleliste{
+
+//     constructor(){
+//         super()
+//     }
+
+// }
 
 //TODO kan bruke arv
 // new Spilleliste_gui
