@@ -171,6 +171,7 @@ class Spilleliste{
 
         kontainer.appendChild(this.modus_knapp);
 
+
         //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
         for (let i = 0; i < this.sanger.length; i++) {
 
@@ -192,13 +193,14 @@ class Spilleliste{
             lyd.classList.add('lyd')
             lyd.src = `${this.path_spilleliste}/${this.sanger[i].lydfil}`;
             lyd.autoplay = false;
-            lyd.controls = true;
+            lyd.controls = true;      
             
             lyd.addEventListener("ended", () => {
                 //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
                 //om modus er "tilfeldig" spiller det ingen rolle
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
                 this.spill_sang_spilleliste()
+                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
             });
 
             lyd.addEventListener("play", () => {
@@ -206,10 +208,41 @@ class Spilleliste{
                 //manuelt av bruker
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
+                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
             });
 
             innhold_kort.appendChild(lyd);
         }
+    }
+
+    //lager en "bottom bar"
+    lag_bunn_bar(spor){
+        console.log(spor)
+        const bunn_bar = document.createElement("div");
+        bunn_bar.id = ("bunn_bar");
+        document.body.appendChild(bunn_bar);
+
+        // const lyd = document.createElement('audio');
+        // lyd.classList.add('lyd')
+        // lyd.src = `${this.path_spilleliste}/${spor.lydfil}`;
+        // lyd.autoplay = false;
+        // lyd.controls = true;
+
+        const spill_pause_lyd = document.createElement('button')
+        spill_pause_lyd.classList.add('spill_pause_knapp')            
+        spill_pause_lyd.classList.add('knapp_pauset')   
+        
+        spill_pause_lyd.addEventListener('click', function() {
+            spill_pause_tilstand(spill_pause_lyd)
+        })
+        
+        bunn_bar.appendChild(spill_pause_lyd);
+        // bunn_bar.appendChild(lyd);
+
+        
+
+
+
     }
 }
 // class Oppdater_nettside extends Spilleliste{

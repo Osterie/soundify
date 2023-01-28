@@ -1,5 +1,16 @@
 const nåværende_spilleliste = new Spilleliste();
 
+
+
+// const knapp = document.getElementById('knapp')
+
+// console.log(knapp);
+
+// knapp.addEventListener('click', spill_pause_tilstand)
+{/* <button id='knapp' class="knapp_pauset"></button> */}
+
+
+
 window.onload = winInit;
 function winInit(){ 
     hendelser()
