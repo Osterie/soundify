@@ -139,18 +139,27 @@ class Spilleliste{
 
     updater_nettside(){
 
+        this.nåværende_lydspor_id = 0
+        
         const kontainer = document.getElementById('kontainer_spilleliste')
         //fjerner innholdet til kontaineren.
         kontainer.replaceChildren()
+
+        if(this.bunn_bar){
+            this.bunn_bar.remove()
+            this.bunn_bar = undefined
+            this.spill_pause_lyd = undefined
+        }
 
         //lager spill av knappen
         const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = ("spill_knapp");
         spillav.addEventListener("click", () => { 
-            this.spill_sang_spilleliste(this.nåværende_lydspor_id)
+            this.spill_sang_spilleliste()
         });
 
+        // this.hendelser_bunn_bar(this.nåværende_lydspor_id)
         kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
@@ -200,7 +209,8 @@ class Spilleliste{
                 //om modus er "tilfeldig" spiller det ingen rolle
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
                 this.spill_sang_spilleliste()
-                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                // spill_pause_tilstand(spill_pause_lyd)
+                this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
             });
 
             lyd.addEventListener("play", () => {
@@ -208,7 +218,11 @@ class Spilleliste{
                 //manuelt av bruker
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
-                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+            });
+
+            lyd.addEventListener("pause", () => {
+                spill_pause_tilstand(this.spill_pause_lyd)
             });
 
             innhold_kort.appendChild(lyd);
@@ -216,33 +230,54 @@ class Spilleliste{
     }
 
     //lager en "bottom bar"
-    lag_bunn_bar(spor){
-        console.log(spor)
-        const bunn_bar = document.createElement("div");
-        bunn_bar.id = ("bunn_bar");
-        document.body.appendChild(bunn_bar);
+    hendelser_bunn_bar(spor){
 
-        // const lyd = document.createElement('audio');
-        // lyd.classList.add('lyd')
-        // lyd.src = `${this.path_spilleliste}/${spor.lydfil}`;
-        // lyd.autoplay = false;
-        // lyd.controls = true;
+        if (!this.bunn_bar){
+            this.bunn_bar = document.createElement("div");
+            this.bunn_bar.id = ("bunn_bar");
+            document.body.appendChild(this.bunn_bar);
+            
+            this.skip_baklengs_sang_knapp = document.createElement("button")
+            this.bunn_bar.appendChild(this.skip_baklengs_sang_knapp); 
 
-        const spill_pause_lyd = document.createElement('button')
-        spill_pause_lyd.classList.add('spill_pause_knapp')            
-        spill_pause_lyd.classList.add('knapp_pauset')   
+            
+            this.skip_baklengs_sang = document.createElement("img");
+            this.skip_baklengs_sang.src = "./bilder/previous_track_button.png"
+            this.skip_baklengs_sang.id = ("skip_baklengs_sang");
+            this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang); 
+
+        }
+
+        if(!this.spill_pause_lyd){
+            this.spill_pause_lyd = document.createElement('button')
+            this.spill_pause_lyd.classList.add('spill_pause_knapp')            
+            this.spill_pause_lyd.classList.add('knapp_pauset')  
+            spill_pause_tilstand(this.spill_pause_lyd)
+            bunn_bar.appendChild(this.spill_pause_lyd);
+
+            this.spill_pause_lyd.addEventListener('click', () => {
+                // this.nåværende_lydspor_id = parseInt(spor.id)
+                // this.spill_sang_spilleliste()
+                this.sanger[this.nåværende_lydspor_id].spill_pause_sang()
+
+            })
+
+        }
+
+
+        if (!this.skip_sang) {
+
+            this.skip_sang_knapp = document.createElement("button")
+            this.bunn_bar.appendChild(this.skip_sang_knapp); 
+
+
+            this.skip_sang = document.createElement("img");
+            this.skip_sang.src = "./bilder/next_track_button_larger.png"
+            this.skip_sang.id = ("skip_sang");
+            this.skip_sang_knapp.appendChild(this.skip_sang); 
+        }
         
-        spill_pause_lyd.addEventListener('click', function() {
-            spill_pause_tilstand(spill_pause_lyd)
-        })
-        
-        bunn_bar.appendChild(spill_pause_lyd);
-        // bunn_bar.appendChild(lyd);
-
-        
-
-
-
+        spill_pause_tilstand(this.spill_pause_lyd)
     }
 }
 // class Oppdater_nettside extends Spilleliste{

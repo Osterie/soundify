@@ -1,6 +1,12 @@
 body, html{
     padding: 0px;
+    padding-bottom: 64px;
     margin: 0px;
+}
+
+button{
+    cursor:pointer;
+
 }
 
 .album{
@@ -72,4 +78,12 @@ body, html{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#skip_sang{
+    background-color: white;
+}
+
+#skip_baklengs_sang{
+    background-color: white;
 }
