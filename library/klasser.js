@@ -43,6 +43,19 @@ class Spor{
             }
         }
     }
+
+    reset_tid(){
+        const lyd_elementer = document.getElementsByClassName("lyd");
+        const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
+        
+        //sjekker src til alle lyd elementer, om den 
+        for (let i = 0; i < lyd_elementer.length; i++) {
+            if((lyd_elementer[i].src).includes(mål_src)) {
+                lyd_elementer[i].currentTime = 0;
+                break;
+            }
+        }
+    }
 }
 class Spilleliste{
 
@@ -51,6 +64,11 @@ class Spilleliste{
         this.sanger = []
         this.nåværende_lydspor_id = 0
         this.spill_modus = 'sekvensiell'
+    
+        //Husker de tidligere spilte sanger, kun for tilfeldig spill modus
+        this.spilte_sanger = []
+        //id for hvor i arrayen vi er
+        this.spilte_sanger_index = -1
     }
 
     async lastinn_fra_json(path_json, spilleliste_navn){
@@ -74,7 +92,6 @@ class Spilleliste{
                 this.innhold_objekt[i].id,
                 this.path_spilleliste
                 )
-                
             this.sanger.push(sang_info)
         }
         this.updater_nettside()
@@ -88,6 +105,10 @@ class Spilleliste{
             if (this.nåværende_lydspor_id === this.sanger.length){
                 this.nåværende_lydspor_id = 0
             }
+            else if (this.nåværende_lydspor_id === -1){
+                this.nåværende_lydspor_id = this.sanger.length -1
+            }
+
             this.spill_sekvensiell()
         }
 
@@ -95,7 +116,7 @@ class Spilleliste{
         else if (this.spill_modus === 'tilfeldig'){
             this.spill_random()
             }
-        }
+    }
 
     spill_sekvensiell(){
         this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
@@ -111,10 +132,14 @@ class Spilleliste{
         }
         this.reset_nesten_alle_sanger()
         this.nåværende_lydspor_id = ny_lydspor_id
-        this.sanger[this.nåværende_lydspor_id].spill_pause_sang()    
+        this.sanger[this.nåværende_lydspor_id].spill_pause_sang()   
+
     }
 
     endre_modus(){
+        this.spilte_sanger = []
+        this.spilte_sanger_index = -1
+
         if (this.spill_modus === 'sekvensiell'){
             this.spill_modus = 'tilfeldig'
             this.modus_knapp.innerHTML = 'Tilfeldig'
@@ -142,6 +167,7 @@ class Spilleliste{
         this.nåværende_lydspor_id = 0
         
         const kontainer = document.getElementById('kontainer_spilleliste')
+        
         //fjerner innholdet til kontaineren.
         kontainer.replaceChildren()
 
@@ -214,11 +240,28 @@ class Spilleliste{
             });
 
             lyd.addEventListener("play", () => {
-                //endrer nåværende_lydsport_id til id-en til sangen som blir valgt å spilles av
-                //manuelt av bruker
+
+                console.log('før')
+                console.log(this.spilte_sanger)
+                console.log(this.spilte_sanger_index)
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
+
+                this.spilte_sanger.push(this.sanger[this.nåværende_lydspor_id])
+                this.spilte_sanger_index += 1
+                
+                console.log('etter')
+                console.log(this.spilte_sanger)
+                console.log(this.spilte_sanger_index)
+
+
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
                 this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                
+
+                //endrer nåværende_lydsport_id til id-en til sangen som blir valgt å spilles av
+                //manuelt av bruker
+
+
             });
 
             lyd.addEventListener("pause", () => {
@@ -231,62 +274,81 @@ class Spilleliste{
 
     //lager en "bottom bar"
     hendelser_bunn_bar(spor){
-
+        
         if (!this.bunn_bar){
             this.bunn_bar = document.createElement("div");
             this.bunn_bar.id = ("bunn_bar");
             document.body.appendChild(this.bunn_bar);
-            
+        }
+
+
+        if (!this.skip_baklengs_sang_knapp){
+
             this.skip_baklengs_sang_knapp = document.createElement("button")
             this.bunn_bar.appendChild(this.skip_baklengs_sang_knapp); 
-
             
-            this.skip_baklengs_sang = document.createElement("img");
-            this.skip_baklengs_sang.src = "./bilder/previous_track_button.png"
-            this.skip_baklengs_sang.id = ("skip_baklengs_sang");
-            this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang); 
+            this.skip_baklengs_sang_img = document.createElement("img");
+            this.skip_baklengs_sang_img.src = "./bilder/previous_track_button.png"
+            this.skip_baklengs_sang_img.id = ("skip_baklengs_sang_img");
+            this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang_img); 
+    
+            this.skip_baklengs_sang_knapp.addEventListener('click', () => {
+                if (this.spill_modus === 'sekvensiell'){
+                    this.nåværende_lydspor_id -= 1
+                    this.spill_sang_spilleliste()
+                }
+    
+                else if (this.spill_modus == 'tilfeldig'){
 
+                    if (this.spilte_sanger_index > 0) {
+    
+                        this.spilte_sanger_index -= 1
+                        this.spilte_sanger[this.spilte_sanger_index].spill_pause_sang()
+                    }
+    
+                    else if (this.spilte_sanger_index == 0){
+                        console.log(this.spilte_sanger)
+                        console.log(this.spilte_sanger_index)
+                        this.spilte_sanger[this.spilte_sanger_index].reset_tid();
+
+                    }
+                }
+            })
         }
+
 
         if(!this.spill_pause_lyd){
             this.spill_pause_lyd = document.createElement('button')
             this.spill_pause_lyd.classList.add('spill_pause_knapp')            
             this.spill_pause_lyd.classList.add('knapp_pauset')  
             spill_pause_tilstand(this.spill_pause_lyd)
+
             bunn_bar.appendChild(this.spill_pause_lyd);
 
             this.spill_pause_lyd.addEventListener('click', () => {
-                // this.nåværende_lydspor_id = parseInt(spor.id)
-                // this.spill_sang_spilleliste()
                 this.sanger[this.nåværende_lydspor_id].spill_pause_sang()
-
             })
-
         }
 
+        spill_pause_tilstand(this.spill_pause_lyd)
 
-        if (!this.skip_sang) {
+        if (!this.skip_sang_knapp) {
 
             this.skip_sang_knapp = document.createElement("button")
             this.bunn_bar.appendChild(this.skip_sang_knapp); 
 
+            this.skip_sang_img = document.createElement("img");
+            this.skip_sang_img.src = "./bilder/next_track_button_larger.png"
+            this.skip_sang_img.id = ("skip_sang_img");
+            this.skip_sang_knapp.appendChild(this.skip_sang_img); 
 
-            this.skip_sang = document.createElement("img");
-            this.skip_sang.src = "./bilder/next_track_button_larger.png"
-            this.skip_sang.id = ("skip_sang");
-            this.skip_sang_knapp.appendChild(this.skip_sang); 
-        }
-        
-        spill_pause_tilstand(this.spill_pause_lyd)
+            this.skip_sang_knapp.addEventListener('click', () => {
+                this.nåværende_lydspor_id += 1
+                this.spill_sang_spilleliste()
+            })
+        }    
     }
 }
-// class Oppdater_nettside extends Spilleliste{
-
-//     constructor(){
-//         super()
-//     }
-
-// }
 
 //TODO kan bruke arv
 // new Spilleliste_gui
