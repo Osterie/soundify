@@ -235,7 +235,17 @@ class Spilleliste{
         if (!this.bunn_bar){
             this.bunn_bar = document.createElement("div");
             this.bunn_bar.id = ("bunn_bar");
-            document.body.appendChild(this.bunn_bar); 
+            document.body.appendChild(this.bunn_bar);
+            
+            this.skip_baklengs_sang_knapp = document.createElement("button")
+            this.bunn_bar.appendChild(this.skip_baklengs_sang_knapp); 
+
+            
+            this.skip_baklengs_sang = document.createElement("img");
+            this.skip_baklengs_sang.src = "./bilder/previous_track_button.png"
+            this.skip_baklengs_sang.id = ("skip_baklengs_sang");
+            this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang); 
+
         }
 
         if(!this.spill_pause_lyd){
@@ -243,7 +253,7 @@ class Spilleliste{
             this.spill_pause_lyd.classList.add('spill_pause_knapp')            
             this.spill_pause_lyd.classList.add('knapp_pauset')  
             spill_pause_tilstand(this.spill_pause_lyd)
-
+            bunn_bar.appendChild(this.spill_pause_lyd);
 
             this.spill_pause_lyd.addEventListener('click', () => {
                 // this.nåværende_lydspor_id = parseInt(spor.id)
@@ -252,10 +262,21 @@ class Spilleliste{
 
             })
 
-        
-        bunn_bar.appendChild(this.spill_pause_lyd);
-            
         }
+
+
+        if (!this.skip_sang) {
+
+            this.skip_sang_knapp = document.createElement("button")
+            this.bunn_bar.appendChild(this.skip_sang_knapp); 
+
+
+            this.skip_sang = document.createElement("img");
+            this.skip_sang.src = "./bilder/next_track_button_larger.png"
+            this.skip_sang.id = ("skip_sang");
+            this.skip_sang_knapp.appendChild(this.skip_sang); 
+        }
+        
         spill_pause_tilstand(this.spill_pause_lyd)
     }
 }
