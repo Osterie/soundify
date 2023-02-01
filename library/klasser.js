@@ -5,8 +5,8 @@ class Spor{
         this.tittel = tittel
         this.bildefil = bildefil
         this.lydfil = lydfil
-        this.id = id
         this.path_bilde_lyd = path_bilde_lyd
+        this.id = id
     }
 
     spill_pause_sang(){
@@ -66,9 +66,12 @@ class Spilleliste{
         this.spill_modus = 'sekvensiell'
     
         //Husker de tidligere spilte sanger, kun for tilfeldig spill modus
-        this.spilte_sanger = []
+        this.spilte_sanger_indexer = []
         //id for hvor i arrayen vi er
         this.spilte_sanger_index = -1
+        //forteller om sangen som spiller er del av this.spilte_sanger_indexer
+        this.old_songs = false
+
     }
 
     async lastinn_fra_json(path_json, spilleliste_navn){
@@ -97,18 +100,19 @@ class Spilleliste{
         this.updater_nettside()
     }
 
-    spill_sang_spilleliste(){
+    spill_sang_spilleliste(index){
+
+        //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
+        if (index === this.sanger.length){
+            index = 0
+        }
+        else if (index === -1){
+            index = this.sanger.length -1
+        }
+        this.nåværende_lydspor_id = index
 
         //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
         if (this.spill_modus === 'sekvensiell'){
-            //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
-            if (this.nåværende_lydspor_id === this.sanger.length){
-                this.nåværende_lydspor_id = 0
-            }
-            else if (this.nåværende_lydspor_id === -1){
-                this.nåværende_lydspor_id = this.sanger.length -1
-            }
-
             this.spill_sekvensiell()
         }
 
@@ -127,18 +131,16 @@ class Spilleliste{
         //random tall fra og med 0 til og med lengden på playlisten
         //velger ett nytt tilfedlig tall om det er det samme som forrige
         let ny_lydspor_id = Math.floor(Math.random() * this.sanger.length);
-        while (ny_lydspor_id === this.nåværende_lydspor_id){
+        while (ny_lydspor_id == this.nåværende_lydspor_id){
             ny_lydspor_id = Math.floor(Math.random() * this.sanger.length);
         }
+
         this.reset_nesten_alle_sanger()
         this.nåværende_lydspor_id = ny_lydspor_id
         this.sanger[this.nåværende_lydspor_id].spill_pause_sang()   
-
     }
 
     endre_modus(){
-        this.spilte_sanger = []
-        this.spilte_sanger_index = -1
 
         if (this.spill_modus === 'sekvensiell'){
             this.spill_modus = 'tilfeldig'
@@ -165,7 +167,11 @@ class Spilleliste{
     updater_nettside(){
 
         this.nåværende_lydspor_id = 0
-        
+        this.spilte_sanger_indexer = []
+        this.spilte_sanger_index = -1
+        this.old_songs = false
+
+
         const kontainer = document.getElementById('kontainer_spilleliste')
         
         //fjerner innholdet til kontaineren.
@@ -175,6 +181,8 @@ class Spilleliste{
             this.bunn_bar.remove()
             this.bunn_bar = undefined
             this.spill_pause_lyd = undefined
+            this.skip_baklengs_sang_knapp = undefined
+            this.skip_sang_knapp = undefined
         }
 
         //lager spill av knappen
@@ -182,7 +190,8 @@ class Spilleliste{
         spillav.innerHTML = 'Spill av'
         spillav.id = ("spill_knapp");
         spillav.addEventListener("click", () => { 
-            this.spill_sang_spilleliste()
+            //TODO: add this.spilte_sanger her!
+            this.spill_sang_spilleliste(this.nåværende_lydspor_id)
         });
 
         // this.hendelser_bunn_bar(this.nåværende_lydspor_id)
@@ -231,37 +240,29 @@ class Spilleliste{
             lyd.controls = true;      
             
             lyd.addEventListener("ended", () => {
-                //current_lysdpor_id blir 1 større enn den sangen som er avsluttet
-                //om modus er "tilfeldig" spiller det ingen rolle
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
-                this.spill_sang_spilleliste()
-                // spill_pause_tilstand(spill_pause_lyd)
+                this.spill_sang_spilleliste(this.nåværende_lydspor_id)
                 this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
             });
 
             lyd.addEventListener("play", () => {
 
-                console.log('før')
-                console.log(this.spilte_sanger)
-                console.log(this.spilte_sanger_index)
+                if (this.spill_modus === 'tilfeldig' && this.old_songs === false){
+                    if (this.spilte_sanger_indexer[this.spilte_sanger_indexer.length - 1] != this.nåværende_lydspor_id) {
+                        this.spilte_sanger_indexer.push(this.nåværende_lydspor_id)
+                        this.spilte_sanger_index += 1
+                        console.log('legger til!')
+                    }
+                    else{
+                        //kan fjerne denne else setningen
+                        console.log('legger ikke til!')
+                    }
+                }
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
-
-                this.spilte_sanger.push(this.sanger[this.nåværende_lydspor_id])
-                this.spilte_sanger_index += 1
-                
-                console.log('etter')
-                console.log(this.spilte_sanger)
-                console.log(this.spilte_sanger_index)
-
-
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
                 this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
-                
-
                 //endrer nåværende_lydsport_id til id-en til sangen som blir valgt å spilles av
                 //manuelt av bruker
-
-
             });
 
             lyd.addEventListener("pause", () => {
@@ -274,6 +275,7 @@ class Spilleliste{
 
     //lager en "bottom bar"
     hendelser_bunn_bar(spor){
+        console.log('wjwhwh', this.spilte_sanger_index, this.spilte_sanger_indexer)
         
         if (!this.bunn_bar){
             this.bunn_bar = document.createElement("div");
@@ -295,22 +297,20 @@ class Spilleliste{
             this.skip_baklengs_sang_knapp.addEventListener('click', () => {
                 if (this.spill_modus === 'sekvensiell'){
                     this.nåværende_lydspor_id -= 1
-                    this.spill_sang_spilleliste()
+                    this.spill_sang_spilleliste(this.nåværende_lydspor_id)
                 }
     
                 else if (this.spill_modus == 'tilfeldig'){
 
-                    if (this.spilte_sanger_index > 0) {
-    
+                    if (this.spilte_sanger_index > 0){
+                        this.old_songs = true
                         this.spilte_sanger_index -= 1
-                        this.spilte_sanger[this.spilte_sanger_index].spill_pause_sang()
+                        console.log(this.spilte_sanger_indexer, this.spilte_sanger_index)
+                        this.sanger[(this.spilte_sanger_indexer[this.spilte_sanger_index])].spill_pause_sang()
                     }
-    
-                    else if (this.spilte_sanger_index == 0){
-                        console.log(this.spilte_sanger)
-                        console.log(this.spilte_sanger_index)
-                        this.spilte_sanger[this.spilte_sanger_index].reset_tid();
-
+                    else{
+                        console.log('pause!')
+                        //pause sang
                     }
                 }
             })
@@ -343,8 +343,24 @@ class Spilleliste{
             this.skip_sang_knapp.appendChild(this.skip_sang_img); 
 
             this.skip_sang_knapp.addEventListener('click', () => {
-                this.nåværende_lydspor_id += 1
-                this.spill_sang_spilleliste()
+                if (this.spill_modus == 'sekvensiell'){
+                    this.nåværende_lydspor_id += 1
+                    this.spill_sang_spilleliste(this.nåværende_lydspor_id)
+                }
+                else if (this.spill_modus == 'tilfeldig'){
+
+
+                    if (this.spilte_sanger_index < this.spilte_sanger_indexer.length - 1){
+                        this.old_songs = true
+                        this.spilte_sanger_index += 1
+                        console.log(this.spilte_sanger_indexer, this.spilte_sanger_index)
+                        this.sanger[(this.spilte_sanger_indexer[this.spilte_sanger_index])].spill_pause_sang()
+                    }
+                    else{
+                        this.old_songs = false
+                        this.spill_sang_spilleliste(this.nåværende_lydspor_id)
+                    }
+                }
             })
         }    
     }
