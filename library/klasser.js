@@ -111,7 +111,7 @@ class Spilleliste{
                 )
             this.sanger.push(sang_info)
         }
-        this.updater_nettside()
+        this.lag_nettside()
     }
 
     spill_sang_spilleliste(sang_index){
@@ -178,36 +178,36 @@ class Spilleliste{
         }
     }
 
-    updater_nettside(){
+    //TODO: dårlig navnnnn
+    lag_nettside(){
 
-        const kontainer = document.getElementById('kontainer_spilleliste')
+        //placeholder for spilleliste elemente som blir dynamiskt laget (og bunnbar-en)
+        this.kontainer = document.getElementById('kontainer_spilleliste')
         
-        //fjerner innholdet til kontaineren.
-        kontainer.replaceChildren()
-
-        if(this.bunn_bar){
-            this.bunn_bar.remove()
-            this.bunn_bar = undefined
-            this.spill_pause_lyd = undefined
-            this.skip_baklengs_sang_knapp = undefined
-            this.skip_sang_knapp = undefined
-        }
+        //når ny spilleliste velges fjerens html informasjonen til den forrige spillelisten.
+        this.kontainer.replaceChildren()
 
         //lager spill av knappen
         const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
-        spillav.id = ("spill_knapp");
+        spillav.id = "spill_knapp";
         spillav.addEventListener("click", () => { 
-            //TODO: add this.spilte_sanger her!
             this.spill_sang_spilleliste(this.nåværende_lydspor_id)
         });
 
-        // this.hendelser_bunn_bar(this.nåværende_lydspor_id)
-        kontainer.appendChild(spillav);
+        this.kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
         this.modus_knapp = document.createElement("button");
         this.modus_knapp.id = ("modus_knapp");
+        if (this.spill_modus === 'sekvensiell'){
+            this.modus_knapp.innerHTML = 'Sekvensiell'
+            this.modus_knapp.style.backgroundColor = 'red'
+        }
+        else if (this.spill_modus === 'tilfeldig'){
+            this.modus_knapp.innerHTML = 'Tilfeldig'
+            this.modus_knapp.style.backgroundColor = 'yellow'
+        }
 
         this.modus_knapp.addEventListener("click", () => {
             if (this.spill_modus === 'sekvensiell'){
@@ -218,24 +218,16 @@ class Spilleliste{
             }
         });
 
-        if (this.spill_modus === 'sekvensiell'){
-            this.modus_knapp.innerHTML = 'Sekvensiell'
-            this.modus_knapp.style.backgroundColor = 'red'
-        }
-        else if (this.spill_modus === 'tilfeldig'){
-            this.modus_knapp.innerHTML = 'Tilfeldig'
-            this.modus_knapp.style.backgroundColor = 'yellow'
-        }
+        this.kontainer.appendChild(this.modus_knapp);
 
-        kontainer.appendChild(this.modus_knapp);
-
-
-        //lager elmentene som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
+        //lager alle "cards" (kort på norsk?) som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
         for (let i = 0; i < this.sanger.length; i++) {
 
+            //kontainer for all informasjonen til hver av sangene.
             const innhold_kort = document.createElement("div")  
             innhold_kort.classList.add('innhold_kort')
-            kontainer.appendChild(innhold_kort);
+            this.kontainer.appendChild(innhold_kort);
+
 
             const artist_tittel = document.createElement("p1");
             artist_tittel.classList.add("album");
@@ -256,7 +248,6 @@ class Spilleliste{
             lyd.addEventListener("ended", () => {
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
                 this.spill_sang_spilleliste(this.nåværende_lydspor_id)
-                this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
             });
 
             lyd.addEventListener("play", () => {
@@ -271,8 +262,6 @@ class Spilleliste{
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
                 this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
-                //endrer nåværende_lydsport_id til id-en til sangen som blir valgt å spilles av
-                //manuelt av bruker
             });
 
             lyd.addEventListener("pause", () => {
@@ -289,7 +278,7 @@ class Spilleliste{
         if (!this.bunn_bar){
             this.bunn_bar = document.createElement("div");
             this.bunn_bar.id = ("bunn_bar");
-            document.body.appendChild(this.bunn_bar);
+            this.kontainer.appendChild(this.bunn_bar);
         }
 
 
