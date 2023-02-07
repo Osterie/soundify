@@ -1,7 +1,11 @@
 body, html{
     padding: 0px;
-    padding-bottom: 64px;
+    padding-bottom: 100px;
     margin: 0px;
+}
+
+p{
+    color: white;
 }
 
 button{
@@ -40,7 +44,7 @@ button{
     position: fixed;
     bottom: 0px;
     width: 100%;
-    height: 62px;
+    height: 112px;
     margin: 0px;
     padding: 0px;
     border: 3px solid #73AD21;
@@ -66,7 +70,7 @@ button{
 
 .knapp_pauset{
     border-style: solid !important;
-    border-width: 30px 0 30px 55px !important;
+    border-width: 35px 0 35px 55px !important;
 }
 
 .knapp_spiller{
@@ -81,6 +85,12 @@ button{
     align-items: center;
 }
 
+#kontainer_sang_manipulasjon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #skip_sang_img{
     background-color: white;
 }
@@ -88,3 +98,41 @@ button{
 #skip_baklengs_sang_img{
     background-color: white;
 }
+
+#bunn_bar_sang_info{
+    position: absolute;
+    left: 0.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bunn_bar_spor_bilde{
+    width: 90px;
+}
+
+#bunn_bar_spor_artist_titel{
+    color: white;
+}
+
+
+#kontainer_sang_progresjonbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#kontainer_sang_manipulasjon{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#kontainer_sang_avspilling{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

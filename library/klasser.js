@@ -32,34 +32,15 @@ class Spor{
     
     //sangen sin tid resetes til null og den pauses, kan brukes når en ny sang spilles av og den tidligere sangen sin spilltid skal resetes
     reset_sang(){
-
-        const lyd_elementer = document.getElementsByClassName("lyd");
-
-        //Dette er kun pathen til dette objektets lydfil.
-        const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
-        
-        //sjekker src til alle lyd elementer, om den 
-        for (let i = 0; i < lyd_elementer.length; i++) {
-            if((lyd_elementer[i].src).includes(mål_src)) {
-                lyd_elementer[i].pause();
-                lyd_elementer[i].currentTime = 0;
-                break;
-            }
-        }
+        const sang_element = document.getElementById(this.lydfil);
+        sang_element.pause();
+        sang_element.currentTime = 0;
     }
 
     //sangen sin tid resetes til null
     reset_tid(){
-        const lyd_elementer = document.getElementsByClassName("lyd");
-        const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
-        
-        //sjekker src til alle lyd elementer, om den 
-        for (let i = 0; i < lyd_elementer.length; i++) {
-            if((lyd_elementer[i].src).includes(mål_src)) {
-                lyd_elementer[i].currentTime = 0;
-                break;
-            }
-        }
+        const sang_element = document.getElementById(this.lydfil);
+        sang_element.currentTime = 0;
     }
 }
 class Spilleliste{
@@ -76,6 +57,8 @@ class Spilleliste{
         this.spilte_sanger_nåværende_index = -1
         //forteller om sangen som spiller er del av this.spilte_sanger_indexer
         this.gamle_sanger = false
+
+        this.sjekk_tid_id
 
     }
 
@@ -246,6 +229,7 @@ class Spilleliste{
 
             const lyd = document.createElement('audio');
             lyd.classList.add('lyd')
+            lyd.id = this.sanger[i].lydfil
             lyd.src = `${this.path_spilleliste}/${this.sanger[i].lydfil}`;
             lyd.autoplay = false;
             lyd.controls = true;      
@@ -255,6 +239,8 @@ class Spilleliste{
                 //deretter spilles sang med nye indexen
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
                 this.spill_sang_spilleliste(this.nåværende_lydspor_id)
+                this.sang_endret_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+
             });
 
             lyd.addEventListener("play", () => {
@@ -272,6 +258,10 @@ class Spilleliste{
 
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
+                this.sang_endret_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                this.finn_tid_i_sang(this.sanger[this.nåværende_lydspor_id])
+
+
             });
 
             lyd.addEventListener("pause", () => {
@@ -284,13 +274,42 @@ class Spilleliste{
     }
 
     //lager en "bottom bar"
-    lag_bunn_bar(){
+    lag_bunn_bar(spor){
         
         this.bunn_bar = document.createElement("div");
         this.bunn_bar.id = ("bunn_bar");
         this.kontainer.appendChild(this.bunn_bar);
 
+        this.kontainer_sang_info = document.createElement("div")
+        this.kontainer_sang_info.id = "bunn_bar_sang_info"
+        this.bunn_bar.appendChild(this.kontainer_sang_info)
+
+        this.spor_bilde = document.createElement("img")
+        this.spor_bilde.id = "bunn_bar_spor_bilde"
+        this.spor_bilde.src = `${this.path_spilleliste}/${spor.bildefil}`
+
+        this.kontainer_sang_info.appendChild(this.spor_bilde)
+
+        this.spor_artist_tittel = document.createElement("h1")
+        this.spor_artist_tittel.id = "bunn_bar_spor_artist_titel"
+        this.spor_artist_tittel.innerHTML =  `${spor.artist} - ${spor.tittel}`;
+        this.kontainer_sang_info.appendChild(this.spor_artist_tittel)
+
+
+        // <progress value="0.9"> </progress>
+
         //lager skip bak knapp m/bilde
+
+        this.kontainer_sang_manipulasjon = document.createElement("div")
+        this.kontainer_sang_manipulasjon.id = "kontainer_sang_manipulasjon"
+        this.bunn_bar.appendChild(this.kontainer_sang_manipulasjon)
+
+
+        this.kontainer_sang_avspilling = document.createElement("div")
+        this.kontainer_sang_avspilling.id = "kontainer_sang_avspilling"
+        this.kontainer_sang_manipulasjon.appendChild(this.kontainer_sang_avspilling)
+
+
         this.skip_baklengs_sang_knapp = document.createElement("button")
         this.skip_baklengs_sang_img = document.createElement("img");
         this.skip_baklengs_sang_img.src = "./bilder/previous_track_button.png"
@@ -317,7 +336,7 @@ class Spilleliste{
             }
         })
     
-        this.bunn_bar.appendChild(this.skip_baklengs_sang_knapp); 
+        this.kontainer_sang_avspilling.appendChild(this.skip_baklengs_sang_knapp); 
 
         //Lager spill/pause knappen
         this.spill_pause_lyd = document.createElement('button')
@@ -328,7 +347,7 @@ class Spilleliste{
             this.sanger[this.nåværende_lydspor_id].spill_pause_sang()
         })
 
-        bunn_bar.appendChild(this.spill_pause_lyd);
+        this.kontainer_sang_avspilling.appendChild(this.spill_pause_lyd);
 
         //lager skip knapp m/bilde
         this.skip_sang_knapp = document.createElement("button")
@@ -358,7 +377,63 @@ class Spilleliste{
             }
         })
 
-        this.bunn_bar.appendChild(this.skip_sang_knapp); 
+        this.kontainer_sang_avspilling.appendChild(this.skip_sang_knapp); 
+
+        //Progress bar
+        this.kontainer_sang_progresjonbar = document.createElement("div");
+        this.kontainer_sang_progresjonbar.id = ("kontainer_sang_progresjonbar");
+        this.kontainer_sang_manipulasjon.appendChild(this.kontainer_sang_progresjonbar); 
+
+        const lyd_element = document.getElementById(spor.lydfil);
+        // sang_element.currentTime = 0;
+
+        this.sang_nåtid = document.createElement("p")
+        this.sang_nåtid.innerHTML = lyd_element.currentTime
+        this.kontainer_sang_progresjonbar.appendChild(this.sang_nåtid); 
+
+
+        this.sang_progresjonbar = document.createElement("progress");
+        this.sang_progresjonbar.id = ("sang_progresjonbar");
+        this.kontainer_sang_progresjonbar.appendChild(this.sang_progresjonbar); 
+
+
+        this.sang_lengde = document.createElement("p")
+
+        //laster inn lydelementet slik at lengden på lydfilen kan leses
+        lyd_element.onloadedmetadata = () => {
+            //enkel måte å gjøre om sekunder til timer, minutt og sekund...
+            let totalt_sekunder = lyd_element.duration
+            let rest_timer = Math.floor(totalt_sekunder / 3600)
+            let rest_minutter = Math.floor((totalt_sekunder / 60) % 60)
+            let rest_sekunder = Math.floor(totalt_sekunder % 60)
+            
+            if (rest_timer != 0){
+                this.sang_lengde.innerHTML = rest_timer + ":" + rest_minutter + ":" + rest_sekunder
+                
+            }
+            else{
+                this.sang_lengde.innerHTML = rest_minutter + ":" + rest_sekunder
+            }
+        };
+        
+        this.kontainer_sang_progresjonbar.appendChild(this.sang_lengde); 
+    }
+
+    finn_tid_i_sang(spor){
+        if (this.sjekk_tid_id){
+            clearInterval(this.sjekk_tid_id)
+        }
+
+        this.sjekk_tid_id = setInterval(() => {
+            const lyd_element = document.getElementById(spor.lydfil);
+            this.sang_nåtid.innerHTML = Math.floor(lyd_element.currentTime)
+        }, 1000);
+    }
+
+    sang_endret_bunn_bar(spor){
+
+        this.spor_bilde.src = `${this.path_spilleliste}/${spor.bildefil}`
+        this.spor_artist_tittel.innerHTML =`${spor.artist} - ${spor.tittel}`;
     }
 
     endre_spill_pause_tilstand(spill_pause_knapp){
