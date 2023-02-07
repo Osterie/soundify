@@ -9,6 +9,7 @@ class Spor{
         this.id = id
     }
 
+    //spiller sangen om den ikke spiller, pauser om den spilles
     spill_pause_sang(){
 
         const lyd_elementer = document.getElementsByClassName("lyd");
@@ -29,9 +30,12 @@ class Spor{
         }
     }
     
+    //sangen sin tid resetes til null og den pauses, kan brukes når en ny sang spilles av og den tidligere sangen sin spilltid skal resetes
     reset_sang(){
 
         const lyd_elementer = document.getElementsByClassName("lyd");
+
+        //Dette er kun pathen til dette objektets lydfil.
         const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
         
         //sjekker src til alle lyd elementer, om den 
@@ -44,6 +48,7 @@ class Spor{
         }
     }
 
+    //sangen sin tid resetes til null
     reset_tid(){
         const lyd_elementer = document.getElementsByClassName("lyd");
         const mål_src = `${this.path_bilde_lyd}/${this.lydfil}`;
@@ -76,17 +81,26 @@ class Spilleliste{
 
     async lastinn_fra_json(path_json, spilleliste_navn){
         
-        this.sanger = []
-        this.path_json = path_json
         
-        //gjør om til små bokstaver og fjerner whitespace
-        spilleliste_navn = spilleliste_navn.toLowerCase().trim()
-        this.spilleliste_navn = spilleliste_navn
+        //Kort sagt: Spilleliste objekter kan kun inneholde informasjonen til en spilleliste.
+        
+        //Lengre: I tilfelle en ny spilleliste lastes inn for klass objektet som lages,
+        //nullstilles informajsonen til spillelisten, det sikrer at det kun være 
+        //en spilleliste sitt innhold i hvert "Spilleliste" klasse objekt som lages.
+        this.sanger = []
+        this.nåværende_lydspor_id = 0
+        this.spilte_sanger_indexer = []
+        this.spilte_sanger_index = -1
+        this.old_songs = false
+
+        
+        this.spilleliste_navn = spilleliste_navn.toLowerCase().trim()
         this.path_spilleliste = `spillelister/${this.spilleliste_navn}`
 
-        this.innhold = await lastInn(`${this.path_json}${this.spilleliste_navn}.json`);
+        this.innhold = await lastInn(`${path_json}${this.spilleliste_navn}.json`);
         this.innhold_objekt = JSON.parse(this.innhold)
 
+        //Lagrer informajsonen fra JSON filen som et klasse objekt (Spor klassen) og legger klass object inn i en array (sanger)
         for (let i = 0; i < this.innhold_objekt.length; i++) {
             const sang_info = new Spor(this.innhold_objekt[i].tittel,
                 this.innhold_objekt[i].artist,
@@ -100,60 +114,60 @@ class Spilleliste{
         this.updater_nettside()
     }
 
-    spill_sang_spilleliste(index){
-
-        //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
-        if (index === this.sanger.length){
-            index = 0
-        }
-        else if (index === -1){
-            index = this.sanger.length -1
-        }
-        this.nåværende_lydspor_id = index
+    spill_sang_spilleliste(sang_index){
 
         //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
         if (this.spill_modus === 'sekvensiell'){
-            this.spill_sekvensiell()
+            this.spill_sekvensiell(sang_index)
         }
 
         //om sang modus er tilfeldig spilles av en tilfeldig sang(som ikke er samme sang som allerede spiller)
         else if (this.spill_modus === 'tilfeldig'){
-            this.spill_random()
-            }
+            this.spill_random(sang_index)
+        }
     }
 
-    spill_sekvensiell(){
+    spill_sekvensiell(sang_index){
+        //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
+        if (sang_index === this.sanger.length){
+            sang_index = 0
+        }
+        else if (sang_index === -1){
+            sang_index = this.sanger.length -1
+        }
+        this.nåværende_lydspor_id = sang_index
         this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
         this.sanger[this.nåværende_lydspor_id].spill_pause_sang()
     }
 
-    spill_random(){
+    spill_random(gammelt_lydspor_id){
         //random tall fra og med 0 til og med lengden på playlisten
         //velger ett nytt tilfedlig tall om det er det samme som forrige
         let ny_lydspor_id = Math.floor(Math.random() * this.sanger.length);
-        while (ny_lydspor_id == this.nåværende_lydspor_id){
+        while (ny_lydspor_id == gammelt_lydspor_id){
             ny_lydspor_id = Math.floor(Math.random() * this.sanger.length);
         }
 
-        this.reset_nesten_alle_sanger()
+        this.reset_nesten_alle_sanger(ny_lydspor_id)
         this.nåværende_lydspor_id = ny_lydspor_id
         this.sanger[this.nåværende_lydspor_id].spill_pause_sang()   
     }
 
-    endre_modus(){
+    endre_spill_modus(nytt_modus){
 
-        if (this.spill_modus === 'sekvensiell'){
-            this.spill_modus = 'tilfeldig'
-            this.modus_knapp.innerHTML = 'Tilfeldig'
-            this.modus_knapp.style.backgroundColor = 'yellow'
-        }
-        else if (this.spill_modus === 'tilfeldig'){
+        if (nytt_modus === 'sekvensiell'){
             this.spill_modus = 'sekvensiell'
             this.modus_knapp.innerHTML = 'Sekvensiell'
             this.modus_knapp.style.backgroundColor = 'red'
         }
+        else if (nytt_modus === 'tilfeldig'){
+            this.spill_modus = 'tilfeldig'
+            this.modus_knapp.innerHTML = 'Tilfeldig'
+            this.modus_knapp.style.backgroundColor = 'yellow'
+        }
     }
 
+    //reseter alle sanger, utenom unntak sangen, som den nye sangen som skal spilles av.
     reset_nesten_alle_sanger(unntak){
         for (let i = 0; i < this.sanger.length; i++) {
             //Om man trykker spill av igjen og har modus "sekvensiell", resets ikke sangen.
@@ -165,12 +179,6 @@ class Spilleliste{
     }
 
     updater_nettside(){
-
-        this.nåværende_lydspor_id = 0
-        this.spilte_sanger_indexer = []
-        this.spilte_sanger_index = -1
-        this.old_songs = false
-
 
         const kontainer = document.getElementById('kontainer_spilleliste')
         
@@ -199,18 +207,24 @@ class Spilleliste{
 
         //lager knappen hvor man kan endre avspillings modus
         this.modus_knapp = document.createElement("button");
-        this.modus_knapp.id = ("modus");
+        this.modus_knapp.id = ("modus_knapp");
+
         this.modus_knapp.addEventListener("click", () => {
-            this.endre_modus();
+            if (this.spill_modus === 'sekvensiell'){
+                this.endre_spill_modus('tilfeldig');
+            }
+            else if (this.spill_modus === 'tilfeldig'){
+                this.endre_spill_modus('sekvensiell');
+            }
         });
 
         if (this.spill_modus === 'sekvensiell'){
-            this.modus_knapp.style.backgroundColor = 'red'
             this.modus_knapp.innerHTML = 'Sekvensiell'
+            this.modus_knapp.style.backgroundColor = 'red'
         }
-         else if (this.spill_modus === 'tilfeldig'){
-            this.modus_knapp.style.backgroundColor = 'yellow'
+        else if (this.spill_modus === 'tilfeldig'){
             this.modus_knapp.innerHTML = 'Tilfeldig'
+            this.modus_knapp.style.backgroundColor = 'yellow'
         }
 
         kontainer.appendChild(this.modus_knapp);
@@ -251,13 +265,9 @@ class Spilleliste{
                     if (this.spilte_sanger_indexer[this.spilte_sanger_indexer.length - 1] != this.nåværende_lydspor_id) {
                         this.spilte_sanger_indexer.push(this.nåværende_lydspor_id)
                         this.spilte_sanger_index += 1
-                        console.log('legger til!')
-                    }
-                    else{
-                        //kan fjerne denne else setningen
-                        console.log('legger ikke til!')
                     }
                 }
+
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
                 this.hendelser_bunn_bar(this.sanger[this.nåværende_lydspor_id])
@@ -275,7 +285,6 @@ class Spilleliste{
 
     //lager en "bottom bar"
     hendelser_bunn_bar(spor){
-        console.log('wjwhwh', this.spilte_sanger_index, this.spilte_sanger_indexer)
         
         if (!this.bunn_bar){
             this.bunn_bar = document.createElement("div");
@@ -305,12 +314,11 @@ class Spilleliste{
                     if (this.spilte_sanger_index > 0){
                         this.old_songs = true
                         this.spilte_sanger_index -= 1
-                        console.log(this.spilte_sanger_indexer, this.spilte_sanger_index)
                         this.sanger[(this.spilte_sanger_indexer[this.spilte_sanger_index])].spill_pause_sang()
                     }
                     else{
-                        console.log('pause!')
-                        //pause sang
+                        //Første sang i "spilte sanger" arrayen, derfor resets bare tiden
+                        this.sanger[(this.spilte_sanger_indexer[this.spilte_sanger_index])].reset_tid()
                     }
                 }
             })
@@ -353,7 +361,6 @@ class Spilleliste{
                     if (this.spilte_sanger_index < this.spilte_sanger_indexer.length - 1){
                         this.old_songs = true
                         this.spilte_sanger_index += 1
-                        console.log(this.spilte_sanger_indexer, this.spilte_sanger_index)
                         this.sanger[(this.spilte_sanger_indexer[this.spilte_sanger_index])].spill_pause_sang()
                     }
                     else{
