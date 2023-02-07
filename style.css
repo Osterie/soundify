@@ -65,13 +65,14 @@ button{
 }
 
 .knapp_pauset{
-      border-style: double !important;
-      border-width: 0px 0 0px 60px !important;
+    border-style: solid !important;
+    border-width: 30px 0 30px 55px !important;
 }
 
 .knapp_spiller{
-    border-style: solid !important;
-    border-width: 30px 0 30px 55px !important;
+
+    border-style: double !important;
+    border-width: 0px 0 0px 60px !important;
 }
 
 #bunn_bar{
