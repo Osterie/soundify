@@ -59,7 +59,6 @@ class Spilleliste{
         this.spilte_sanger_indexer = []
         this.spilte_sanger_nåværende_index = -1
         this.gamle_sanger = false
-        // this.endre_spill_pause_tilstand(this.spill_pause_lyd)
 
         this.spilleliste_navn = spilleliste_navn.toLowerCase().trim()
         this.path_spilleliste = `spillelister/${this.spilleliste_navn}`
@@ -82,12 +81,10 @@ class Spilleliste{
     }
 
     spill_sang_spilleliste(sang_index){
-
         //om spill_modus er satt til å spille sekvensiell øker sang index med 1 (eller til 0)
         if (this.spill_modus === 'sekvensiell'){
             this.spill_sekvensiell(sang_index)
         }
-
         //om sang modus er tilfeldig spilles av en tilfeldig sang(som ikke er samme sang som allerede spiller)
         else if (this.spill_modus === 'tilfeldig'){
             this.spill_random(sang_index)
@@ -96,7 +93,7 @@ class Spilleliste{
 
     spill_sekvensiell(sang_index){
         //om slutten av spillelisten er nådd, begynner den på nytt, ellers er det bare sekvensiell som spilles
-        if (sang_index === this.sanger.length){
+        if (sang_index === this.sanger.length){ 
             sang_index = 0
         }
         else if (sang_index === -1){
@@ -114,14 +111,12 @@ class Spilleliste{
         while (ny_lydspor_id == gammelt_lydspor_id){
             ny_lydspor_id = Math.floor(Math.random() * this.sanger.length);
         }
-
-        this.reset_nesten_alle_sanger(ny_lydspor_id)
         this.nåværende_lydspor_id = ny_lydspor_id
+        this.reset_nesten_alle_sanger(ny_lydspor_id)
         this.sanger[this.nåværende_lydspor_id].spill_pause_sang()   
     }
 
     endre_spill_modus(nytt_modus){
-
         if (nytt_modus === 'sekvensiell'){
             this.spill_modus = 'sekvensiell'
             this.modus_knapp.innerHTML = 'Sekvensiell'
@@ -137,7 +132,6 @@ class Spilleliste{
     //reseter alle sanger, utenom unntak sangen, som den nye sangen som skal spilles av.
     reset_nesten_alle_sanger(unntak){
         for (let i = 0; i < this.sanger.length; i++) {
-            //Om man trykker spill av igjen og har modus "sekvensiell", resets ikke sangen.
             if (i === unntak){
                 continue
             }
@@ -157,9 +151,7 @@ class Spilleliste{
         const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = "spill_knapp";
-        spillav.addEventListener("click", () => { 
-            this.spill_sang_spilleliste(this.nåværende_lydspor_id)
-        });
+        spillav.addEventListener("click", () => { this.spill_sang_spilleliste(this.nåværende_lydspor_id) });
         this.kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
