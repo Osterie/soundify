@@ -58,13 +58,11 @@ class Spilleliste{
         //forteller om sangen som spiller er del av this.spilte_sanger_indexer
         this.gamle_sanger = false
 
+        //setIntervall id som endrer progressbar-en til sangen
         this.sjekk_tid_id
-
     }
 
     async lastinn_fra_json(path_json, spilleliste_navn){
-        
-        
         //Kort sagt: Spilleliste objekter kan kun inneholde informasjonen til en spilleliste.
         
         //Lengre: I tilfelle en ny spilleliste lastes inn for klass objektet som lages,
@@ -182,7 +180,6 @@ class Spilleliste{
         spillav.addEventListener("click", () => { 
             this.spill_sang_spilleliste(this.nåværende_lydspor_id)
         });
-
         this.kontainer.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
@@ -255,19 +252,13 @@ class Spilleliste{
                         this.spilte_sanger_nåværende_index += 1
                     }
                 }
-
                 this.nåværende_lydspor_id = parseInt(this.sanger[i].id)
                 this.reset_nesten_alle_sanger(this.nåværende_lydspor_id)
                 this.sang_endret_bunn_bar(this.sanger[this.nåværende_lydspor_id])
                 this.finn_tid_i_sang(this.sanger[this.nåværende_lydspor_id])
 
-
             });
-
-            lyd.addEventListener("pause", () => {
-                this.endre_spill_pause_tilstand(this.spill_pause_lyd)
-            });
-         
+            lyd.addEventListener("pause", () => {this.endre_spill_pause_tilstand(this.spill_pause_lyd)});
             innhold_kort.appendChild(lyd);
         }
         this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
@@ -296,10 +287,7 @@ class Spilleliste{
         this.kontainer_sang_info.appendChild(this.spor_artist_tittel)
 
 
-        // <progress value="0.9"> </progress>
-
         //lager skip bak knapp m/bilde
-
         this.kontainer_sang_manipulasjon = document.createElement("div")
         this.kontainer_sang_manipulasjon.id = "kontainer_sang_manipulasjon"
         this.bunn_bar.appendChild(this.kontainer_sang_manipulasjon)
@@ -385,7 +373,6 @@ class Spilleliste{
         this.kontainer_sang_manipulasjon.appendChild(this.kontainer_sang_progresjonbar); 
 
         const lyd_element = document.getElementById(spor.lydfil);
-        // sang_element.currentTime = 0;
 
         this.sang_nåtid = document.createElement("p")
         this.sang_nåtid.innerHTML = lyd_element.currentTime
@@ -396,16 +383,16 @@ class Spilleliste{
         this.sang_progresjonbar.id = ("sang_progresjonbar");
         this.kontainer_sang_progresjonbar.appendChild(this.sang_progresjonbar); 
 
-
         this.sang_lengde = document.createElement("p")
 
         //laster inn lydelementet slik at lengden på lydfilen kan leses
         lyd_element.onloadedmetadata = () => {
             //enkel måte å gjøre om sekunder til timer, minutt og sekund...
-            let totalt_sekunder = lyd_element.duration
-            let rest_timer = Math.floor(totalt_sekunder / 3600)
-            let rest_minutter = Math.floor((totalt_sekunder / 60) % 60)
-            let rest_sekunder = Math.floor(totalt_sekunder % 60)
+            this.totalt_sekunder = lyd_element.duration
+            
+            const rest_timer = Math.floor(this.totalt_sekunder / 3600)
+            const rest_minutter = Math.floor((this.totalt_sekunder / 60) % 60)
+            const rest_sekunder = Math.floor(this.totalt_sekunder % 60)
             
             if (rest_timer != 0){
                 this.sang_lengde.innerHTML = rest_timer + ":" + rest_minutter + ":" + rest_sekunder
@@ -415,23 +402,34 @@ class Spilleliste{
                 this.sang_lengde.innerHTML = rest_minutter + ":" + rest_sekunder
             }
         };
-        
         this.kontainer_sang_progresjonbar.appendChild(this.sang_lengde); 
     }
 
     finn_tid_i_sang(spor){
+
         if (this.sjekk_tid_id){
             clearInterval(this.sjekk_tid_id)
         }
 
         this.sjekk_tid_id = setInterval(() => {
+            
             const lyd_element = document.getElementById(spor.lydfil);
-            this.sang_nåtid.innerHTML = Math.floor(lyd_element.currentTime)
-        }, 1000);
+            
+            const rest_timer = Math.floor(lyd_element.currentTime / 3600)
+            const rest_minutter = Math.floor((lyd_element.currentTime / 60) % 60)
+            const rest_sekunder = Math.floor(lyd_element.currentTime % 60)
+            
+            if (rest_timer != 0){
+                this.sang_nåtid.innerHTML = rest_timer + ":" + rest_minutter + ":" + rest_sekunder
+            }
+            else{
+                this.sang_nåtid.innerHTML =  rest_minutter + ":" + rest_sekunder
+            }
+            this.sang_progresjonbar.value = ((100/this.totalt_sekunder)*lyd_element.currentTime)/100
+        }, 250);
     }
 
     sang_endret_bunn_bar(spor){
-
         this.spor_bilde.src = `${this.path_spilleliste}/${spor.bildefil}`
         this.spor_artist_tittel.innerHTML =`${spor.artist} - ${spor.tittel}`;
     }
