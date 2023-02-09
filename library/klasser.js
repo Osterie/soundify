@@ -120,12 +120,12 @@ class Spilleliste{
         if (nytt_modus === 'sekvensiell'){
             this.spill_modus = 'sekvensiell'
             this.modus_knapp.innerHTML = 'Sekvensiell'
-            this.modus_knapp.style.backgroundColor = 'red'
+            this.modus_knapp.style.backgroundColor = '#800020'
         }
         else if (nytt_modus === 'tilfeldig'){
             this.spill_modus = 'tilfeldig'
             this.modus_knapp.innerHTML = 'Tilfeldig'
-            this.modus_knapp.style.backgroundColor = 'yellow'
+            this.modus_knapp.style.backgroundColor = 'blue'
         }
     }
 
@@ -159,11 +159,11 @@ class Spilleliste{
         this.modus_knapp.id = ("modus_knapp");
         if (this.spill_modus === 'sekvensiell'){
             this.modus_knapp.innerHTML = 'Sekvensiell'
-            this.modus_knapp.style.backgroundColor = 'red'
+            this.modus_knapp.style.backgroundColor = '#800020'
         }
         else if (this.spill_modus === 'tilfeldig'){
             this.modus_knapp.innerHTML = 'Tilfeldig'
-            this.modus_knapp.style.backgroundColor = 'yellow'
+            this.modus_knapp.style.backgroundColor = 'blue'
         }
         this.modus_knapp.addEventListener("click", () => {
             if (this.spill_modus === 'sekvensiell'){
@@ -212,6 +212,9 @@ class Spilleliste{
             });
 
             lyd.addEventListener("play", () => {
+        
+                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+
                 //Husker hvilke sanger som har blitt spilt av,
                 //slik man skan hoppe tilbake til sangene man hørte på.
                 if (this.spill_modus === 'tilfeldig' && this.gamle_sanger === false){
@@ -230,7 +233,6 @@ class Spilleliste{
             lyd.addEventListener("pause", () => {this.endre_spill_pause_tilstand(this.spill_pause_lyd)});
             innhold_kort.appendChild(lyd);
         }
-        this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
     }
 
     //lager en "bottom bar"
