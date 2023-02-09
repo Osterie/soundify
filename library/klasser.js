@@ -165,7 +165,6 @@ class Spilleliste{
             this.modus_knapp.innerHTML = 'Tilfeldig'
             this.modus_knapp.style.backgroundColor = 'yellow'
         }
-
         this.modus_knapp.addEventListener("click", () => {
             if (this.spill_modus === 'sekvensiell'){
                 this.endre_spill_modus('tilfeldig');
@@ -213,7 +212,6 @@ class Spilleliste{
             });
 
             lyd.addEventListener("play", () => {
-
                 //Husker hvilke sanger som har blitt spilt av,
                 //slik man skan hoppe tilbake til sangene man hørte på.
                 if (this.spill_modus === 'tilfeldig' && this.gamle_sanger === false){
@@ -318,7 +316,6 @@ class Spilleliste{
                 this.spill_sang_spilleliste(this.nåværende_lydspor_id)
             }
             else if (this.spill_modus == 'tilfeldig'){
-
                 //husker hvilke sanger som har blitt spilt og spiller av de neste sangene i en liste som husker hvilke sanger som har blitt avspilt
                 if (this.spilte_sanger_nåværende_index < this.spilte_sanger_indexer.length - 1){
                     this.gamle_sanger = true
@@ -353,20 +350,17 @@ class Spilleliste{
 
         this.sang_lengde = document.createElement("p")
 
-
         //laster inn lydelementet slik at lengden på lydfilen kan leses
         lyd_element.onloadedmetadata = () => {this.lag_tid(spor, this.sang_lengde, 'fremtid')};
         this.kontainer_sang_progresjonbar.appendChild(this.sang_lengde); 
     }
 
     finn_tid_i_sang(spor){
-
         const lyd_element = document.getElementById(spor.lydfil);
 
         if (this.sjekk_tid_id){
             clearInterval(this.sjekk_tid_id)
         }
-
         this.sjekk_tid_id = setInterval(() => {
             this.lag_tid(spor, this.sang_nåtid, 'nåværende')
             this.sang_progresjonbar.value = ((100/lyd_element.duration)*lyd_element.currentTime)/100
@@ -386,7 +380,6 @@ class Spilleliste{
             spill_pause_knapp.classList.remove('knapp_spiller')
             spill_pause_knapp.classList.add('knapp_pauset')
         }
-
         else{
             spill_pause_knapp.classList.remove('knapp_pauset')
             spill_pause_knapp.classList.add('knapp_spiller')
@@ -402,7 +395,6 @@ class Spilleliste{
             var rest_minutter = Math.floor((lyd_element.currentTime / 60) % 60)
             var rest_sekunder = Math.floor(lyd_element.currentTime % 60)
         }
-        
         else if (tidsrom == 'fremtid'){
             var rest_timer = Math.floor(lyd_element.duration / 3600)
             var rest_minutter = Math.floor((lyd_element.duration / 60) % 60)
@@ -412,11 +404,10 @@ class Spilleliste{
         if (Math.floor(rest_minutter/10) == 0){
             rest_minutter = '0' + (rest_minutter).toString()
         }
-
         if (Math.floor(rest_sekunder/10) == 0){
             rest_sekunder = '0' + (rest_sekunder).toString()
         }
-        
+
         if (rest_timer != 0){
             mål_element.innerHTML = rest_timer + ":" + rest_minutter + ":" + rest_sekunder
         }
@@ -425,6 +416,3 @@ class Spilleliste{
         }    
     }
 }
-
-//TODO kan bruke arv
-// new Spilleliste_gui
