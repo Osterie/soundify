@@ -1,0 +1,189 @@
+body, html{
+  padding: 0px;
+  padding-bottom: 64px;
+  margin: 0px;
+  text-align: center;
+  background-color: #E3E2DF ;
+}
+
+#soundify {
+  font-size: 20px;
+}
+
+.spilleliste {
+  font-size: 15px;
+  padding: 10px;
+  margin: 10px;
+  transition-duration: 0.4s;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+  display: inline-block; padding: 10px;
+}
+
+a#soundify:hover, a#soundify:active {
+  text-decoration: underline;
+}
+
+button{
+  cursor:pointer;
+}
+
+
+.album{
+  width: 200px;
+  background-color: wheat;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.bilde{
+  width: 150px 150px;
+  background-color: black;
+}
+
+#kontainer_spilleliste{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 200px;
+  grid-gap: 100px;
+  padding-top: 10px;
+  border: #4CAF50;
+}
+
+#kontainer_spilleliste > button {
+  padding: 12px 30px;
+  background-color:darkseagreen;
+  color: white;
+  border-radius: 50px;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+box-shadow: 2px 4px 15px rgba(0,0,0,0.2);
+}
+
+
+.innhold_kort{
+  margin: auto;
+  width: 300px;
+  height: 350px;
+}
+
+.innhold_kort > img {
+  width: 100px;
+  height: 100px;
+}
+
+.lyd {
+  width: 100%;
+}
+
+#modus{
+  background-color: white;
+}
+
+#bunn_bar{
+position: fixed;
+bottom: 0px;
+width: 100%;
+height: 122px;
+margin: 0px;
+padding: 0px;
+border: 3px solid #73AD21;
+background-color: black;
+}
+
+
+.spill_pause_knapp {
+border: 0;
+background: transparent;
+box-sizing: border-box;
+width: 0;
+height: 62px;
+
+border-color: transparent transparent transparent white;
+transition: 100ms all ease;
+cursor: pointer;
+}
+
+.spill_pause_knapp:hover{
+border-color: transparent transparent transparent gainsboro;
+}
+
+.knapp_pauset{
+border-style: solid !important;
+border-width: 35px 0 35px 55px !important;
+}
+
+.knapp_spiller{
+
+border-style: double !important;
+border-width: 0px 0 0px 60px !important;
+}
+
+#bunn_bar{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+#kontainer_sang_manipulasjon{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+#skip_sang_img{
+background-color: white;
+}
+
+#skip_baklengs_sang_img{
+background-color: white;
+}
+
+#bunn_bar_sang_info{
+position: absolute;
+left: 0.5vw;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+#bunn_bar_spor_bilde{
+width: 90px;
+}
+
+#bunn_bar_spor_artist_titel{
+color: white;
+}
+
+
+#kontainer_sang_progresjonbar{
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 20px;
+}
+
+#kontainer_sang_manipulasjon{
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+#kontainer_sang_avspilling{
+display: flex;
+justify-content: center;
+align-items: center;
+}
