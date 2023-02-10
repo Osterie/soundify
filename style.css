@@ -6,9 +6,15 @@ body,html {
   background-color: #e3e2df;
 }
 
+p{
+  color: white;
+}
+
 #soundify {
   font-size: 20px;
 }
+
+
 
 .spilleliste {
   font-size: 15px;
@@ -109,6 +115,7 @@ button:hover {
   box-sizing: border-box;
   width: 0;
   height: 62px;
+  margin-left: 10px;
 
   border-color: transparent transparent transparent white;
   transition: 100ms all ease;
@@ -163,6 +170,7 @@ button:hover {
 
 #bunn_bar_spor_artist_titel {
   color: white;
+  margin-left: 5px;
 }
 
 #kontainer_sang_progresjonbar {
@@ -183,4 +191,5 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 5px;
 }
