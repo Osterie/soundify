@@ -129,6 +129,7 @@ button:hover {
 }
 
 #kontainer_sang_manipulasjon {
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;

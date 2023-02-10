@@ -68,8 +68,8 @@ class Spilleliste{
 
         //Lagrer informajsonen fra JSON filen som et klasse objekt (Spor klassen) og legger klass object inn i en array (sanger)
         for (let i = 0; i < this.innhold_objekt.length; i++) {
-            const sang_info = new Spor(this.innhold_objekt[i].tittel,
-                this.innhold_objekt[i].artist,
+            const sang_info = new Spor(this.innhold_objekt[i].artist,
+                this.innhold_objekt[i].tittel,
                 this.innhold_objekt[i].bildefil,
                 this.innhold_objekt[i].lydfil,
                 this.innhold_objekt[i].id,
@@ -129,7 +129,6 @@ class Spilleliste{
         }
     }
 
-    //reseter alle sanger, utenom unntak sangen, som den nye sangen som skal spilles av.
     reset_nesten_alle_sanger(unntak){
         for (let i = 0; i < this.sanger.length; i++) {
             if (i === unntak){
@@ -143,12 +142,23 @@ class Spilleliste{
         //stopper den gjentagende sjekken av hvor i sangen vi er.
         clearInterval(this.sjekk_tid_id)
         
-        //placeholder for spilleliste elemente som blir dynamiskt laget (og bunnbar-en)
+        //placeholder for spilleliste sang elemente som blir dynamiskt laget (og bunnbar-en)
         this.kontainer_spilleliste_innhold = document.getElementById('kontainer_spilleliste_innhold')
 
-        //når ny spilleliste velges fjerens html informasjonen til den forrige spillelisten.
+        //når ny spilleliste velges fjerens html informasjonen til den forrige spillelisten. 
         this.kontainer_spilleliste_innhold.replaceChildren()
 
+        this.lag_avspilling_knapper()
+
+        this.lag_innhold_kort()
+
+        for (let i = 0; i < spillelister.length; i++) { spillelister[i].remove() }
+        const kontainer_navigasjon = document.getElementById("kontainer_navigasjon")
+        const back_knapp_fjern_innhold = [this.kontainer_avspilling_knapper, this.kontainer_spilleliste_innhold]
+        this.lag_tilbake_knapp(kontainer_navigasjon, spillelister, back_knapp_fjern_innhold)
+    }
+
+    lag_avspilling_knapper(){
         this.kontainer_avspilling_knapper = document.getElementById("kontainer_avspilling_knapper")
 
 
@@ -180,13 +190,6 @@ class Spilleliste{
         });
 
         this.kontainer_avspilling_knapper.appendChild(this.modus_knapp);
-
-        this.lag_innhold_kort()
-
-        for (let i = 0; i < spillelister.length; i++) { spillelister[i].remove() }
-        const kontainer_navigasjon = document.getElementById("kontainer_navigasjon")
-        const back_knapp_fjern_innhold = [this.kontainer_avspilling_knapper, this.kontainer_spilleliste_innhold]
-        this.lag_tilbake_knapp(kontainer_navigasjon, spillelister, back_knapp_fjern_innhold)
     }
 
     lag_tilbake_knapp(kontainer_knapp_plassering, innhold_mål, innhold_fjern){
@@ -224,15 +227,13 @@ class Spilleliste{
             const artist_tittel = document.createElement("p1");
             artist_tittel.classList.add("album");
             artist_tittel.innerHTML = `${this.sanger[i].artist} - ${this.sanger[i].tittel}` ;
-            innhold_kort.appendChild(artist_tittel);
-
+            
             const bilde = document.createElement("img")
             bilde.classList.add("img");
             bilde.src = `${this.path_spilleliste}/${this.sanger[i].bildefil}`
             bilde.addEventListener("click", () =>{
                 this.sanger[i].spill_pause_sang()
             })
-            innhold_kort.appendChild(bilde);
 
             const lyd = document.createElement('audio');
             lyd.classList.add('lyd')
@@ -241,21 +242,10 @@ class Spilleliste{
             lyd.autoplay = false;
             lyd.controls = true;      
             
-            lyd.addEventListener("ended", () => {
-                //sang index øker naturligvis med 1, om spillmodus er tilfeldig er det irrelevant
-                //deretter spilles sang med nye indexen
-                this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
-                this.spill_sang_spilleliste(this.nåværende_lydspor_id)
-                this.sang_endret_bunn_bar(this.sanger[this.nåværende_lydspor_id])
-
-            });
-
             lyd.addEventListener("play", () => {
-        
                 if(!document.getElementById("bunn_bar")){
                     this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
                 }
-
                 //Husker hvilke sanger som har blitt spilt av,
                 //slik man skan hoppe tilbake til sangene man hørte på.
                 if (this.spill_modus === 'tilfeldig' && this.gamle_sanger === false){
@@ -272,6 +262,18 @@ class Spilleliste{
                 this.endre_spill_pause_tilstand(this.spill_pause_lyd)
             });
             lyd.addEventListener("pause", () => {this.endre_spill_pause_tilstand(this.spill_pause_lyd)});
+
+            lyd.addEventListener("ended", () => {
+                //sang index øker naturligvis med 1, om spillmodus er tilfeldig er det irrelevant
+                //deretter spilles sang med nye indexen
+                this.nåværende_lydspor_id = parseInt(this.sanger[i].id) + 1
+                this.spill_sang_spilleliste(this.nåværende_lydspor_id)
+                this.sang_endret_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+
+            });
+            
+            innhold_kort.appendChild(artist_tittel);
+            innhold_kort.appendChild(bilde);
             innhold_kort.appendChild(lyd);
         }
     }
