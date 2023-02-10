@@ -147,39 +147,30 @@ class Spilleliste{
 
         //når ny spilleliste velges fjerens html informasjonen til den forrige spillelisten. 
         this.kontainer_spilleliste_innhold.replaceChildren()
+        
+        const kontainer_avspilling_knapper = document.getElementById("kontainer_avspilling_knapper")
 
-        this.lag_avspilling_knapper()
+        this.lag_avspilling_knapper(kontainer_avspilling_knapper)
 
         this.lag_innhold_kort()
 
         for (let i = 0; i < spillelister.length; i++) { spillelister[i].remove() }
         const kontainer_navigasjon = document.getElementById("kontainer_navigasjon")
-        const back_knapp_fjern_innhold = [this.kontainer_avspilling_knapper, this.kontainer_spilleliste_innhold]
+        const back_knapp_fjern_innhold = [kontainer_avspilling_knapper, this.kontainer_spilleliste_innhold]
         this.lag_tilbake_knapp(kontainer_navigasjon, spillelister, back_knapp_fjern_innhold)
     }
 
-    lag_avspilling_knapper(){
-        this.kontainer_avspilling_knapper = document.getElementById("kontainer_avspilling_knapper")
-
+    lag_avspilling_knapper(kontainer){
 
         //lager spill av knappen
         const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = "spill_knapp";
         spillav.addEventListener("click", () => { this.spill_sang_spilleliste(this.nåværende_lydspor_id) });
-        this.kontainer_avspilling_knapper.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
         this.modus_knapp = document.createElement("button");
         this.modus_knapp.id = ("modus_knapp");
-        if (this.spill_modus === 'sekvensiell'){
-            this.modus_knapp.innerHTML = 'Sekvensiell'
-            this.modus_knapp.style.backgroundColor = '#800020'
-        }
-        else if (this.spill_modus === 'tilfeldig'){
-            this.modus_knapp.innerHTML = 'Tilfeldig'
-            this.modus_knapp.style.backgroundColor = 'blue'
-        }
         this.modus_knapp.addEventListener("click", () => {
             if (this.spill_modus === 'sekvensiell'){
                 this.endre_spill_modus('tilfeldig');
@@ -189,7 +180,17 @@ class Spilleliste{
             }
         });
 
-        this.kontainer_avspilling_knapper.appendChild(this.modus_knapp);
+        if (this.spill_modus === 'sekvensiell'){
+            this.modus_knapp.innerHTML = 'Sekvensiell'
+            this.modus_knapp.style.backgroundColor = '#800020'
+        }
+        else if (this.spill_modus === 'tilfeldig'){
+            this.modus_knapp.innerHTML = 'Tilfeldig'
+            this.modus_knapp.style.backgroundColor = 'blue'
+        }
+
+        kontainer.appendChild(spillav);
+        kontainer.appendChild(this.modus_knapp);
     }
 
     lag_tilbake_knapp(kontainer_knapp_plassering, innhold_mål, innhold_fjern){
@@ -214,7 +215,7 @@ class Spilleliste{
         kontainer_knapp_plassering.appendChild(this.tilbake_knapp)
     }
 
-    lag_innhold_kort(){
+    lag_innhold_kort(kontainer){
         //lager alle "cards" (kort på norsk?) som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
         for (let i = 0; i < this.sanger.length; i++) {
 
@@ -387,7 +388,6 @@ class Spilleliste{
         this.sang_nåtid = document.createElement("p")
         this.sang_nåtid.innerHTML = "00:00"
         this.kontainer_sang_progresjonbar.appendChild(this.sang_nåtid); 
-
 
         this.sang_progresjonbar = document.createElement("progress");
         this.sang_progresjonbar.id = ("sang_progresjonbar");
