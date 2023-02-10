@@ -399,7 +399,6 @@ class Spilleliste{
         
         //laster inn lydelementet slik at lengden på lydfilen kan leses
         lyd_element.onloadedmetadata = () => {this.lag_tid(spor, this.sang_lengde, 'fremtid')};
-
         kontainer.appendChild(this.sang_nåtid); 
         kontainer.appendChild(this.sang_progresjonbar); 
         kontainer.appendChild(this.sang_lengde); 
@@ -407,12 +406,12 @@ class Spilleliste{
 
     finn_tid_i_sang(spor){
         const lyd_element = document.getElementById(spor.lydfil);
-
         if (this.sjekk_tid_id){
             clearInterval(this.sjekk_tid_id)
         }
         this.sjekk_tid_id = setInterval(() => {
             this.lag_tid(spor, this.sang_nåtid, 'nåværende')
+            //finner hvor mye prosent sangen er ferdig (oppgitt i brøkdeler)
             this.sang_progresjonbar.value = ((100/lyd_element.duration)*lyd_element.currentTime)/100
         }, 250);
     }
