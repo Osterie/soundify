@@ -140,19 +140,24 @@ class Spilleliste{
     }
 
     lag_nettside(){
-
+        //stopper den gjentagende sjekken av hvor i sangen vi er.
+        clearInterval(this.sjekk_tid_id)
+        
         //placeholder for spilleliste elemente som blir dynamiskt laget (og bunnbar-en)
-        this.kontainer = document.getElementById('kontainer_spilleliste')
+        this.kontainer_spilleliste_innhold = document.getElementById('kontainer_spilleliste_innhold')
 
         //når ny spilleliste velges fjerens html informasjonen til den forrige spillelisten.
-        this.kontainer.replaceChildren()
+        this.kontainer_spilleliste_innhold.replaceChildren()
+
+        this.kontainer_avspilling_knapper = document.getElementById("kontainer_avspilling_knapper")
+
 
         //lager spill av knappen
         const spillav = document.createElement("button");
         spillav.innerHTML = 'Spill av'
         spillav.id = "spill_knapp";
         spillav.addEventListener("click", () => { this.spill_sang_spilleliste(this.nåværende_lydspor_id) });
-        this.kontainer.appendChild(spillav);
+        this.kontainer_avspilling_knapper.appendChild(spillav);
 
         //lager knappen hvor man kan endre avspillings modus
         this.modus_knapp = document.createElement("button");
@@ -174,15 +179,46 @@ class Spilleliste{
             }
         });
 
-        this.kontainer.appendChild(this.modus_knapp);
+        this.kontainer_avspilling_knapper.appendChild(this.modus_knapp);
 
+        this.lag_innhold_kort()
+
+        for (let i = 0; i < spillelister.length; i++) { spillelister[i].remove() }
+        const kontainer_navigasjon = document.getElementById("kontainer_navigasjon")
+        const back_knapp_fjern_innhold = [this.kontainer_avspilling_knapper, this.kontainer_spilleliste_innhold]
+        this.lag_tilbake_knapp(kontainer_navigasjon, spillelister, back_knapp_fjern_innhold)
+    }
+
+    lag_tilbake_knapp(kontainer_knapp_plassering, innhold_mål, innhold_fjern){
+        
+        this.tilbake_knapp = document.createElement("button")
+        this.tilbake_knapp.id = "tilbake_knapp"
+        this.tilbake_knapp.innerHTML = "Tilbake"
+        
+        this.tilbake_knapp.addEventListener("click", () =>{
+            for (let i = 0; i < innhold_mål.length; i++) {
+                kontainer_knapp_plassering.appendChild(innhold_mål[i])
+            }
+
+            for (let i = 0; i < innhold_fjern.length; i++) {
+                innhold_fjern[i].replaceChildren() 
+            }
+
+
+            kontainer_knapp_plassering.removeChild(this.tilbake_knapp)
+        })
+
+        kontainer_knapp_plassering.appendChild(this.tilbake_knapp)
+    }
+
+    lag_innhold_kort(){
         //lager alle "cards" (kort på norsk?) som inneholder informajsonene om bilde til sangen, tittel, artist, og lyden
         for (let i = 0; i < this.sanger.length; i++) {
 
-            //kontainer for all informasjonen til hver av sangene.
+            //kontainer_spilleliste_innhold for all informasjonen til hver av sangene.
             const innhold_kort = document.createElement("div")  
             innhold_kort.classList.add('innhold_kort')
-            this.kontainer.appendChild(innhold_kort);
+            this.kontainer_spilleliste_innhold.appendChild(innhold_kort);
 
 
             const artist_tittel = document.createElement("p1");
@@ -191,8 +227,11 @@ class Spilleliste{
             innhold_kort.appendChild(artist_tittel);
 
             const bilde = document.createElement("img")
-            bilde.classList.add("bilde");
+            bilde.classList.add("img");
             bilde.src = `${this.path_spilleliste}/${this.sanger[i].bildefil}`
+            bilde.addEventListener("click", () =>{
+                this.sanger[i].spill_pause_sang()
+            })
             innhold_kort.appendChild(bilde);
 
             const lyd = document.createElement('audio');
@@ -213,7 +252,9 @@ class Spilleliste{
 
             lyd.addEventListener("play", () => {
         
-                this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                if(!document.getElementById("bunn_bar")){
+                    this.lag_bunn_bar(this.sanger[this.nåværende_lydspor_id])
+                }
 
                 //Husker hvilke sanger som har blitt spilt av,
                 //slik man skan hoppe tilbake til sangene man hørte på.
@@ -240,7 +281,7 @@ class Spilleliste{
         
         this.bunn_bar = document.createElement("div");
         this.bunn_bar.id = ("bunn_bar");
-        this.kontainer.appendChild(this.bunn_bar);
+        this.kontainer_spilleliste_innhold.appendChild(this.bunn_bar);
 
         this.kontainer_sang_info = document.createElement("div")
         this.kontainer_sang_info.id = "bunn_bar_sang_info"
@@ -270,10 +311,10 @@ class Spilleliste{
 
 
         this.skip_baklengs_sang_knapp = document.createElement("button")
-        this.skip_baklengs_sang_img = document.createElement("img");
-        this.skip_baklengs_sang_img.src = "./bilder/previous_track_button.png"
-        this.skip_baklengs_sang_img.id = ("skip_baklengs_sang_img");
-        this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang_img); 
+        this.skip_baklengs_sang_bilde = document.createElement("img");
+        this.skip_baklengs_sang_bilde.src = "./bilder/previous_track_button.png"
+        this.skip_baklengs_sang_bilde.id = ("skip_baklengs_sang_bilde");
+        this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang_bilde); 
 
         this.skip_baklengs_sang_knapp.addEventListener('click', () => {
             if (this.spill_modus === 'sekvensiell'){
@@ -299,7 +340,7 @@ class Spilleliste{
 
         //Lager spill/pause knappen
         this.spill_pause_lyd = document.createElement('button')
-        this.spill_pause_lyd.classList.add('spill_pause_knapp')            
+        this.spill_pause_lyd.id = 'spill_pause_knapp'
         this.spill_pause_lyd.classList.add('knapp_pauset')  
         this.spill_pause_lyd.addEventListener('click', () => { this.sanger[this.nåværende_lydspor_id].spill_pause_sang() })
 
@@ -307,10 +348,10 @@ class Spilleliste{
 
         //lager skip knapp m/bilde
         this.skip_sang_knapp = document.createElement("button")
-        this.skip_sang_img = document.createElement("img");
-        this.skip_sang_img.src = "./bilder/next_track_button_larger.png"
-        this.skip_sang_img.id = ("skip_sang_img");
-        this.skip_sang_knapp.appendChild(this.skip_sang_img); 
+        this.skip_sang_bilde = document.createElement("img");
+        this.skip_sang_bilde.src = "./bilder/next_track_button_larger.png"
+        this.skip_sang_bilde.id = ("skip_sang_bilde");
+        this.skip_sang_knapp.appendChild(this.skip_sang_bilde); 
 
         this.skip_sang_knapp.addEventListener('click', () => {
             if (this.spill_modus == 'sekvensiell'){
