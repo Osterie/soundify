@@ -2,6 +2,9 @@ SOUNDIFY
 
 Om prosjekt
 
+Baserer seg på en XAMPP løsning, last ned XAMPP, gå inn til XAMPP sin fil plassering, inn på htdocs, også last opp Soundify.
+Deretter kan du åpne det med localhost/soundify i nettleser.
+
 I dette prosjektet skal vi lage en app som brukes til å spille musikk, ala spotify, hvor man kan gå inn på forskjellige spillelister der man kan spille av sanger.
 
 Github
