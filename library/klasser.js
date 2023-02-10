@@ -321,18 +321,17 @@ class Spilleliste{
 
     lag_spor_avspilling(kontainer){
 
-        this.skip_baklengs_sang_knapp = document.createElement("button")
-        this.skip_baklengs_sang_bilde = document.createElement("img");
-        this.skip_baklengs_sang_bilde.src = "./bilder/previous_track_button.png"
-        this.skip_baklengs_sang_bilde.id = ("skip_baklengs_sang_bilde");
-        this.skip_baklengs_sang_knapp.appendChild(this.skip_baklengs_sang_bilde); 
-
-        this.skip_baklengs_sang_knapp.addEventListener('click', () => {
+        //lager skip baklengs knapp m/bilde
+        const skip_baklengs_sang_knapp = document.createElement("button")
+        const skip_baklengs_sang_bilde = document.createElement("img");
+        skip_baklengs_sang_bilde.src = "./bilder/previous_track_button.png"
+        skip_baklengs_sang_bilde.id = ("skip_baklengs_sang_bilde");
+        skip_baklengs_sang_knapp.appendChild(skip_baklengs_sang_bilde); 
+        skip_baklengs_sang_knapp.addEventListener('click', () => {
             if (this.spill_modus === 'sekvensiell'){
                 this.nåværende_lydspor_id -= 1
                 this.spill_sang_spilleliste(this.nåværende_lydspor_id)
             }
-
             else if (this.spill_modus == 'tilfeldig'){
                 //husker hvilke sanger som har blitt spilt og spiller av de tidligere sangene
                 if (this.spilte_sanger_nåværende_index > 0){
@@ -346,25 +345,22 @@ class Spilleliste{
                 }
             }
         })
-    
-        kontainer.appendChild(this.skip_baklengs_sang_knapp); 
 
         //Lager spill/pause knappen
         this.spill_pause_lyd = document.createElement('button')
         this.spill_pause_lyd.id = 'spill_pause_knapp'
         this.spill_pause_lyd.classList.add('knapp_pauset')  
-        this.spill_pause_lyd.addEventListener('click', () => { this.sanger[this.nåværende_lydspor_id].spill_pause_sang() })
-
-        kontainer.appendChild(this.spill_pause_lyd);
+        this.spill_pause_lyd.addEventListener('click', () => { 
+            this.sanger[this.nåværende_lydspor_id].spill_pause_sang() 
+        })
 
         //lager skip knapp m/bilde
-        this.skip_sang_knapp = document.createElement("button")
-        this.skip_sang_bilde = document.createElement("img");
-        this.skip_sang_bilde.src = "./bilder/next_track_button_larger.png"
-        this.skip_sang_bilde.id = ("skip_sang_bilde");
-        this.skip_sang_knapp.appendChild(this.skip_sang_bilde); 
-
-        this.skip_sang_knapp.addEventListener('click', () => {
+        const skip_sang_knapp = document.createElement("button")
+        const skip_sang_bilde = document.createElement("img");
+        skip_sang_bilde.src = "./bilder/next_track_button_larger.png"
+        skip_sang_bilde.id = ("skip_sang_bilde");
+        skip_sang_knapp.appendChild(skip_sang_bilde); 
+        skip_sang_knapp.addEventListener('click', () => {
             if (this.spill_modus == 'sekvensiell'){
                 this.nåværende_lydspor_id += 1
                 this.spill_sang_spilleliste(this.nåværende_lydspor_id)
@@ -384,7 +380,9 @@ class Spilleliste{
             }
         })
 
-        kontainer.appendChild(this.skip_sang_knapp); 
+        kontainer.appendChild(skip_baklengs_sang_knapp); 
+        kontainer.appendChild(this.spill_pause_lyd);
+        kontainer.appendChild(skip_sang_knapp); 
     }
 
     lag_progresjonsbar(kontainer, spor){
@@ -393,16 +391,17 @@ class Spilleliste{
 
         this.sang_nåtid = document.createElement("p")
         this.sang_nåtid.innerHTML = "00:00"
-        kontainer.appendChild(this.sang_nåtid); 
 
         this.sang_progresjonbar = document.createElement("progress");
         this.sang_progresjonbar.id = ("sang_progresjonbar");
-        kontainer.appendChild(this.sang_progresjonbar); 
 
         this.sang_lengde = document.createElement("p")
-
+        
         //laster inn lydelementet slik at lengden på lydfilen kan leses
         lyd_element.onloadedmetadata = () => {this.lag_tid(spor, this.sang_lengde, 'fremtid')};
+
+        kontainer.appendChild(this.sang_nåtid); 
+        kontainer.appendChild(this.sang_progresjonbar); 
         kontainer.appendChild(this.sang_lengde); 
     }
 
