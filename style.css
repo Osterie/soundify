@@ -19,6 +19,24 @@ button:hover {
   box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+#back {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  margin: 5px;
+  top: 0px;
+  left: 0px;
+  width: 200px;
+  height: 75px;
+  font-size: 50px;
+  background-color: #00adb5;
+  text-decoration: "none";
+  color: #222831;
+  border: 3px solid black;
+}
+
 .innhold_kort {
   margin: auto;
   width: 400px;
